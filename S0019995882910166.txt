@@ -1,0 +1,10 @@
+Seppo Sippu, Eljas Soisalon-Soininen,
+On LL(k) parsing,
+Information and Control,
+Volume 53, Issue 3,
+1982,
+Pages 141-164,
+ISSN 0019-9958,
+https://doi.org/10.1016/S0019-9958(82)91016-6.
+(https://www.sciencedirect.com/science/article/pii/S0019995882910166)
+Abstract: The theory of LL(k) parsing of context-free grammars is developed as a dual of the theory of LR(k) parsing. An LL(k) parser is regarded as a push-down transducer in which the push-down symbols are certain equivalence classes of “viable suffixes,” a dual concept of the “viable prefixes” used in the LR(k) theory. The approach allows a rigorous mathematical treatment, including general correctness proofs, of LL(k) parsers obtained via different equivalence relations on the viable suffixes. In particular, the equivalence relation that yields the canonical LL(k) parser is considered, and a new method for constructing the canonical parser is given. This method is based on sets of “items” similar to those used in Knuth's method for constructing LR(k) parsers. An implication of this is that various techniques in the LR(k) theory, e.g., optimization and efficient testing methods, can easily be adopted in the LL(k) theory as well. This is also of practical importance because canonical LL(k) parsers for k = 1 have gained new attention in error handling, thanks to their capability for early error deteçtion.

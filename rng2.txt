@@ -1,0 +1,8 @@
+The easiest way to convert a uniform random number to a randomly distributed one is to use binomials.
+
+-- -1 < r < 1
+boxmuller :: Double -> Double -> Maybe (Double, Double)
+boxmuller r1 r2 = do
+  let s = r1^2 + r2^2
+  if s>1 then Nothing else
+    Just (u*sqrt(-2*log(s)/s), v*sqrt(-2*log(s)/s))

@@ -1,0 +1,14 @@
+Basic Knot Theory Background
+Knot Representation
+The Unknotting Problem
+Computational Complexity
+Brute Force (Reidemeister Moves)
+Haken's Algorithm
+Hass, Lagarias, Pippenger
+Birman & Hirsch 
+Lackenby's Quasipolynomial Algorithm
+Known Unknowns
+
+
+https://msp.org/gt/1998/2-1/gt-v2-n1-p09-s.pdf
+https://iopscience.iop.org/article/10.1070/RM2003v058n06ABEH000675/pdf

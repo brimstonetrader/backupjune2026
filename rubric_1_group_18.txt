@@ -1,0 +1,44 @@
+How many times have you met? 3 good.
+ 
+What have each of you contributed? 
+  Ali - Design, Notes, Finding APIs, Finding Data Structures
+  Carlos - Data Structures
+  Ibrahim - Visual API, Trie for the data source, Timeline, etc.
+  
+Who all is present?
+   Everyone
+
+What is your plan for distributing work from here?
+  Communication and fluid responsibilities.
+
+Commit labels all good
+
+What problem does your project seek to solve?
+   Reduce screen time. Track time saved not scrolling, plan time more fruitfully. Pokemon themed.
+
+Show me the plan for your project's layout, features, and functionality.
+   Check
+ 
+Tell me about potential ethical issues with your project.
+   Potential for lying and cheating. Dependency fostered?
+
+Do you have a schedule from now to the deadline?
+   Yes, in github.
+
+What is your data source and why is it appropriate?
+   PokeAPI, User Input
+
+How will data be pulled into the backend?
+   Check
+
+What sort of data processing is necessary?
+   Check
+
+What data structures are you using and why? Were there any you considered but ultimately did not use?
+   Heap and Trie. Considered Check.
+
+GRADE : 20/20
+
+Carlos Velasquez
+Ali Mouhtadi
+Ibrahim Abushalanfah

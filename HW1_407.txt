@@ -1,0 +1,40 @@
+1. The goal of the Supreme Court's Dobbs ruling was to make it more difficult for women to recieve abortions, and to ultimately make it so less abortions occur, and more American women have children. This desire is at odds with the majority of Americans, and the majority of American women. Because of this disconnect, as well as the fear caused by the spectre of a nationwide ban, the total number of abortions nationwide increased from 2020 to 2024. (https://www.guttmacher.org/2024/03/despite-bans-number-abortions-united-states-increased-2023) Some women who live in states where the procedure is illegal are able to receive the procedure in "sanctuary states," where the procedure is readily accessible to them. Anecdotally, the vast majority of my female friends became far less likely to consider having children after the ruling.
+
+2. I walk past a homeless man on my way to class. He can either ask me for a dollar, or silently let me pass, and I can either give him a dollar, or tell him no. If I give him a dollar without him asking, he will take offense and refuse it. All outcomes except (Give, Ask) end in (0,0). 
+
+           Ask       Not Ask 
+Give       (-1, 1)   (0,0)
+Not Give   (0,0)     (0,0)
+
+The homeless man has a dominant strategy of "Ask", as it is strictly better in the Give case, and nowhere bested. I have a dominant strategy of "Not Give", which is strictly better in the Ask case. Thus, there is a dominant strategy equilibrium of (Ask, Not Give). I am not economically optimal in real life, sometimes kindness wins. 
+
+
+3a. (Stag, Stag) and (Hare, Hare). Both are more desirable than a permutation of (Stag, Hare) for one party, and better-or-equal for the other.
+
+3b. (M,C). First L can be eliminated because it is fully dominated by M. Then D, Then R, Then U. 
+
+4a. Rock-Paper-Scissors has no actions that can be eliminated by strict or weak elimination.
+
+4b. 
+
+   D      E
+A  (1,1)  (0,0)
+B  (1,1)  (5,1)
+C  (0,0)  (5,1)
+
+C can be eliminated because of B, then E can be eliminated, leaving (1,1) at either AD or BD. Alternatively, A can be eliminated, then D, leaving (5,1) at either BE or CE. 
+
+GRAD
+
+
+1. Suppose there exists a Nash Equilibrium where P1 says x and P2 says y. There exists a better move for P1 (y+1), and a better move for P2 (x+1). Thus, that was not a Nash Equilibrium, and by contradiction there cannot be one.
+
+2a. 
+
+  A     B 
+C (1,1) (0,0)
+D (0,0) (0,0)
+
+This game has two Nash Equilibria, AC and BD. BD can be eliminated, as both B and D are weakly dominated.
+
+2b. Suppose there exists a game with some number of pure Nash equilibria that cannot be reduced further by iterative elimination. For some player, add a new move that is strictly dominated. There exists a move with a better utility in all cases, so no possible state containing that move can be a Nash Equilibrium. As moves continue to be added, no new equilibria are created. Thus, iterative elimination cannot remove a pure equilibrium.

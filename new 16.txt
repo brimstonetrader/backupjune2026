@@ -1,41 +1,52 @@
+#include "types.h"
+#include "stat.h"
+#include "user.h"
+#define NUM_CHILDREN 3
 
-function TRAIN_CFR(T):
-  initialize RegretSum, StrategySum to 0 for all infosets/actions
-  for t = 1..T:
-    for i in {1,2}:                      
-      CFR(state = ROOT, i, pi1 = 1, pi2 = 1)
-  return AverageStrategy = normalize(StrategySum) for every infoset
+void
+worker(int id, int iterations)
+{
+  int i, j;
+  int count = 0;
+  int start_time = uptime();
+  
+  for(i = 0; i < iterations; i++) {
+    for(j = 0; j < 1000000; j++) { count++; } 
+}
+  
+  int end_time = uptime();
+  sleep(id);
+  printf(1, "Process %d (age %d) completed in %d ticks\n", getpid(), id, end_time - start_time);
+}
 
-function CFR(state, i, pi1, pi2):
-  if state is terminal:
-    return payoff_to_player1(state) 
-
-  if state is chance:
-    v = 0
-    for outcome o with prob p:
-      v += p * CFR(next(state,o), i, pi1, pi2)
-    return v
-
-  p = player_to_act(state)          
-  I = infoset_of(p, state)
-  A = legal_actions(state)
-
-  pos = [max(RegretSum[I][a], 0) for a in A]
-  S = sum_over_legal_actions(I, pos[a])
-  for a in A:
-    if S > 0: 
-      sigma[a] = pos[a] / S else sigma[a] = 1 / |A|
-
-  for a in A:
-    if p == 1: v_a[a] = CFR(next(state,a), i, pi1 * sigma[a], pi2)
-    else:      v_a[a] = CFR(next(state,a), i, pi1,            pi2 * sigma[a])
-
-  v = sum_a sigma[a] * v_a[a]
-  if p == 1: pi_p = pi1; pi_opp = pi2 
-  else:      pi_p = pi2; pi_opp = pi1
-  if p == i:
-    for a in A:
-      RegretSum[I][a]   += pi_opp * (v_a[a] - v)
-      StrategySum[I][a] += pi_p   * sigma[a]
-
-  return v
+int
+main(int argc, char *argv[])
+{
+  int i;
+  int pid;
+  int ages[NUM_CHILDREN] = {10, 5, 1};  
+  
+  printf(1, "Starting age scheduler test...\n");
+  printf(1, "Creating %d processes with different age\n\n", NUM_CHILDREN);
+  
+  for(i = 0; i < NUM_CHILDREN; i++) {
+    pid = fork();
+    if(pid < 0) {
+      printf(1, "Fork failed\n");
+      exit();
+    }
+    if(pid == 0) {
+      setage(ages[i]);
+      printf(1, "Child %d started with age %d\n", getpid(), ages[i]);
+      sleep(10);
+      worker(ages[i], 50);
+      exit();
+    }
+    sleep(1);
+  }
+  
+  printf(1, "\nParent waiting for children to complete...\n\n");
+  for(i = 0; i < NUM_CHILDREN; i++) { wait(); }
+  printf(1, "\nAll processes completed!\n");
+  exit();
+}

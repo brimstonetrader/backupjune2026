@@ -1,0 +1,166 @@
+# run_rcfr.py
+import pyspiel
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+from open_spiel.python.pytorch import rcfr, rcfr_with_alpha
+from open_spiel.python.algorithms import coxucb, coxucb2, coxucb3
+from open_spiel.python.algorithms import exploitability
+from open_spiel.python.examples import gto_rps_variant
+from open_spiel.python.games import rps_variant
+
+i = 3.14 #parameter from 2-4
+
+row_payoffs_variant = [
+    [0, -1, 1*i],
+    [1, -1, -1*i],
+    [-1*i, 1*i, 0*i]
+]
+
+col_payoffs_variant = [
+    [0, 1, -1*i],
+    [-1, 1, 1*i],
+    [1*i, -1*i, 0*i]
+]
+
+alpha = np.random.random() * 2 + 2
+
+def train_fn(model, dataset):
+    loader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=True)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
+    model.train()
+    for x_batch, y_batch in loader:
+        optimizer.zero_grad()
+        preds = model(x_batch)           
+        loss = torch.nn.functional.mse_loss(preds, y_batch) 
+        loss.backward()
+        optimizer.step()
+
+
+def _new_model():
+  return rcfr.DeepRcfrModel(
+      rps_variant.ExtendedRPSGame(alpha),
+      num_hidden_layers=1,
+      num_hidden_units=14,
+    #   alpha=alpha,
+      num_hidden_factors=2,
+      use_skip_connections=True)
+
+game = rps_variant.ExtendedRPSGame(alpha)
+res  = [[0], [0], [0]]
+solver = rcfr.RcfrSolver(game, [_new_model(), _new_model()])
+solver = rcfr.RcfrSolver(game, [_new_model(), _new_model()])
+gto1 = gto_rps_variant.GTO_RPS(game, 0, game.alpha)
+gto2 = gto_rps_variant.GTO_RPS(game, 1, game.alpha)
+transformer_player_id = 0
+# cox_ucb = coxucb2.CoxUCBBot(game, 1 - transformer_player_id)
+
+wrapper = solver._root_wrapper
+# pick player 0 or 1
+player_idx = 0
+
+# make a list that has your target weights in the right slot,
+# and dummy zeros for the other player
+num_players = 2#solver._game.num_players()
+dummy = [None]*num_players
+dummy[player_idx] = solver._cumulative_seq_probs[player_idx]
+
+# build a policy‐function for only that player
+policy_fn = wrapper.sequence_weights_to_policy_fn(dummy)
+
+for state in rcfr.all_states(solver._game.new_initial_state(),
+                            depth_limit=-1,
+                            include_terminals=False,
+                            include_chance_states=False):
+    if state.current_player() == player_idx:
+        print(state.information_state_string(),
+            policy_fn(state))
+print(wrapper.sequence_features)
+
+print(wrapper._walk_descendants(game.new_initial_state()))
+# print(solver.alpha)
+print() ; print() ; print()
+
+for i in range(50000):
+    alpha = np.random.random() * 2 + 2
+    # wrapper._update_alpha(alpha)
+    solver.evaluate_and_update_policy(train_fn)
+    if i%5==4:
+        game = rps_variant.ExtendedRPSGame(alpha)
+        state = game.new_initial_state()
+        while not state.is_terminal():
+            if state.is_chance_node():
+                a, _ = state.chance_outcomes()[np.random.randint(len(state.chance_outcomes()))]
+                state.apply_action(a)
+            else:
+                pid = state.current_player()
+                if pid==transformer_player_id:
+                    dummy = [None]*2
+                    dummy[transformer_player_id] = solver._cumulative_seq_probs[transformer_player_id]
+                    policy_fn = solver._root_wrapper.sequence_weights_to_policy_fn(dummy)                    
+                    pf = policy_fn(state)
+                    action = np.random.random()
+                    state.apply_action(1 if pf[0] < action else 0)
+                else:                   
+                    state.apply_action(gto2.step(state))
+        if i<500:
+            res[0].append(res[0][-1] + state.returns()[transformer_player_id])
+            res[1].append(res[1][-1] + state.returns()[1-transformer_player_id])
+            # res[2].append(solver.alpha)
+    if i in [0,1,9,99,999,9999,49999]:
+        wrapper = solver._root_wrapper
+        print('regret targets: ', solver._regret_targets)
+        print('sequence weights: ', solver._sequence_weights())
+        print('sequence features: ', wrapper.sequence_features)
+
+        # pick player 0 or 1
+        player_idx = 0
+
+        # make a list that has your target weights in the right slot,
+        # and dummy zeros for the other player
+        num_players = solver._game.num_players()
+        dummy = [None]*num_players
+        dummy[player_idx] = solver._cumulative_seq_probs[player_idx]
+
+        # build a policy‐function for only that player
+        policy_fn = wrapper.sequence_weights_to_policy_fn(dummy)
+    
+        for state in rcfr.all_states(solver._game.new_initial_state(),
+                                    depth_limit=-1,
+                                    include_terminals=False,
+                                    include_chance_states=False):
+            if state.current_player() == player_idx:
+                print(state.information_state_string(),
+                    policy_fn(state))
+        print(wrapper.sequence_features)
+        # print(solver.alpha)
+        print() ; print() ; print()
+
+        avg_policy = solver.average_policy()
+        avg_policy = sorted(avg_policy.items(), key=lambda x : x[0])
+        # nash_conv = exploitability.nash_conv(game, avg_policy)  # :contentReference[oaicite:0]{index=0}
+        # print(f"Iter {i:4d} → NashConv (exploitability):")
+        # for p in avg_policy: print(p)
+
+
+
+    #     avg_policy = solver.average_policy()
+    #     avg_policy = sorted(avg_policy.items(), key=lambda x : x[0])
+    #     # nash_conv = exploitability.nash_conv(game, avg_policy)  # :contentReference[oaicite:0]{index=0}
+    #     # print(f"Iter {i:4d} → NashConv (exploitability):")
+    #     # for p in avg_policy: print(p)
+
+# print("Transformer:", res[0]/100, "Random", res[1]/100)
+
+print(solver._sequence_weights())
+
+x = list(range(len(res[0])))
+print(res[0][-1] / len(res[0]))
+plt.figure()
+plt.plot(x, res[1], marker='o', label='Random Player')
+plt.plot(x, res[0], marker='o', label='RCFR With Alpha')
+# plt.plot(x, res[2], marker='o', label='Alpha')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show() 

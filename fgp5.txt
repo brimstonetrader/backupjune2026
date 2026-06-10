@@ -1,0 +1,7 @@
+9?, 11All but Tanmay, 18All but Carlos, 27Y, 
+
+Interesting Problems:
+
+    Unknotting problem
+    Matrix Mortality Problem - Discuss the proofs of unsolvability for n>2, solved special cases, generalizations, and unsolved problems.
+    Unique Games Conjecture

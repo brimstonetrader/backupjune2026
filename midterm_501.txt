@@ -1,0 +1,51 @@
+2. This problem is about an algorithm for the unweighted M AX − SAT problem. Let α = (√5 − 1)/2 =
+0.618... be the reciprocal of the golden ratio. It satisfies the equation α = 1 − α2.
+Assume that the expression does not contain two contradictory clauses of size 1, i.e., it does not contain
+both clauses x and ¯x for any variable.
+Show that there is a truth assignment which satisfies at least an α fraction of the total weight and such
+a truth assignment can be found efficiently.
+Hint: assume that the formula contains variables x1, . . . , xn, and that variables x1, . . . , xk occur as clauses
+of size 1 (without loss of generality we may assume that in the size 1 clauses they occur unnegated).
+Generate a random truth assignment, where the variables x1, . . . , xk are set to 1 with probability α and
+the other variables are set to 1 with probability 1/2. Show that every clause is satisfied with probability
+at least α.
+
+
+4. Consider the following algorithm for testing whether an array A of size n is monotonically increasing:
+for k = 1 to t
+pick a random integer i ∈ {1, . . . , n − 1}
+if A[i] > A[i + 1] then reject
+accept
+Show that if t = O((log n)/ϵ) then this algorithm is not a correct property testing algorithm for mono-
+tonicity.
+Hint: use an example made up of pieces similarly to the example considered in class for a similar
+algorithm.
+
+
+
+5. In the two-dimensional bin-packing problem a list of rectangular items
+(w1, h1), . . . , (wn, hn)
+is given by their width wi and height hi, where wi, hi ≤ 1 for i = 1, . . . , n. The objective is to pack
+these items into a semi-infinite strip of width 1 such that the total height of the packing is as small as
+possible. It is not allowed to rotate the items. (The semi-infinite strip is the set of points (x, y) in the
+plane with 0 ≤ x ≤ 1, y ≥ 0.)
+Consider the following next-fit decreasing height (NFDH) algorithm. Order the items according to non-
+increasing height. Start putting the items at the bottom of the strip. If the next item doesn’t fit then
+open a new level at the top of the first item, and pack items similarly on that level, etc.
+Show that the height of the packing produced by this algorithm satisfies
+ALG ≤ 2 · OP T + 1.
+Hint: let the height of the ith level be hi, the total width of items on the ith level be xi, the width
+of the first item on the ith level be yi, and the total area of items on the ith level be ai. Show that
+xi + yi+1 > 1, and show that this implies ai + ai+1 > hi+1. What is a lower bound for OPT?
+
+
+
+Extra credit problem
+Show that the randomized set cover algorithm can be derandomized.
+Note: The basic idea is to use the method on conditional expectations. The randomized set cover algorithm
+may fail to return a set cover with some small probability. The derandomized version has to return a set cover,
+so the derandomization has to make sure that a set cover is returned.
+Hint: This is Exercise 5.7 in the textbook, where a detailed hint is given. The following is an addition to
+that hint. Let Xj , Z and λ be as in the hint and consider the objective function in the hint. Then it sufficient
+to choose λ to be large enough such that E(Pm
+j=1 wj Xj + λ Z) < λ.

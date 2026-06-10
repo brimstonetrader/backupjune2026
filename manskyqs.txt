@@ -1,0 +1,16 @@
+So what's up with you?
+
+Why use theorem provers for program verification?
+
+What are the current limits of program correctness? Both intractable and unknown?
+
+How does one describe what a correct program should look like in a way that is less difficult to verify than executing the program?
+
+
+472 : Provably Correct Programming
+
+What does the pipeline look like for bringing theorem-proving to production? You talk about building an IDE.
+
+Why do you work with C? 
+
+Have you thought much about verification of quantum programs? How might the stochasticity differ from parallel systems?

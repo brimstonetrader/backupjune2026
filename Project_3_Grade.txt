@@ -1,0 +1,3 @@
+Great work on this assignment! The network is a very accurate model of potential risk and treatment of hypertension. There are fifteen veriables, and over 25 connections between them. The testcases are detailed and accurate to the model. The stated shortcomings are reasonable and cohesive.
+
+10/10

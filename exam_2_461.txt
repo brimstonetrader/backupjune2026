@@ -1,0 +1,461 @@
+- interrupt and device drivers 
+- life of a process 
+- context switch and process scheduling
+- thread vs process 
+- kernel synchronization (locks)
+
+child process returns first. sometimes parent returns first, due to []. The child's return value is initialized in proc.c in line 154. copyuvm(proc->pgdir, proc->sz)
+
+concurrency occurs even in single-threaded OSes due to interrupts and exceptions. BKL was replaced to allow scalable concurrent parallelism. 
+
+What system call is used by the first process to create stdout? -> dup(0), line 19 of init.c
+
+
+An interrupt informs the CPU that a service is needed
+Sources of interrupts
+• Internal faults: divide by zero, page faults, …
+• User software: int instruction
+• Hardware
+
+Every Exception/Interrupt type is assigned a number. Intel x86 defines:
+• Interrupt Vector Range 0-31: reserved by the processor for
+processor-defined exceptions.
+• Interrupt Vector Range 32-255: available for user-defined interrupts
+
+
+System call Description
+fork() Create a process
+exit() Terminate the current process
+wait() Wait for a child process to exit
+kill(pid) Terminate process pid
+getpid() Return the current process’s pid
+sleep(n) Sleep for n clock ticks
+exec(filename, *argv) Load a file and execute it
+sbrk(n) Grow process’s memory by n bytes
+open(filename, flags) Open a file; the flags indicate read/write
+read(fd, buf, n) Read n bytes from an open file into buf
+write(fd, buf, n) Write n bytes to an open file
+close(fd) Release open file fd
+dup(fd) Duplicate fd
+pipe(p) Create a pipe and return fd’s in p
+chdir(dirname) Change the current directory
+mkdir(dirname) Create a new directory
+mknod(name, major, minor) Create a device file
+fstat(fd) Return info about an open file
+link(f1, f2) Create another name (f2) for the file f1
+unlink(filename) Remove a file
+
+
+Which of the following would most likely use the ioctl() function in a
+device driver?
+A. Reading a file from disk
+-> B. Passing a color value to the console device
+C. Allocating memory
+D. Forking a new process
+
+
+What is the purpose of the devsw[] table in xv6?
+B. To map major device numbers to device-specific functions
+
+When fork() is called in xv6, what happens to the child’s
+trapframe->rax field?
+It is set to zero.
+
+What is the purpose of the trapframe field in struct proc?
+C. To store the user-space register state during a trap or syscall
+
+
+When the xv6 kernel is creating a new process, what is the first state assigned to it?
+Embryo
+
+
+Which transition cannot happen directly in xv6?
+A. RUNNING → SLEEPING
+B. RUNNABLE → RUNNING
+-> C. EMBRYO → RUNNING
+D. RUNNING → ZOMBIE
+
+
+In xv6, which function actually saves and restores registers during
+a context switch?
+swtch()
+
+What is the purpose of the struct context in xv6?
+B. To store kernel-mode registers needed to resume a process.
+
+xv6 is
+A. cooperative multitasking
+-> B. preemptive multitasking
+
+
+
+Which of the following is an advantage of using threads over
+processes?
+A. Better memory isolation
+-> B. Lower overhead for context switching
+C. More secure
+D. Threads can run on different machines
+
+What is the major risk when using multiple threads in the same
+process?
+A. Each thread can access hardware directly
+-> B. Threads may accidentally modify each other’s stacks
+C. Threads cannot be scheduled concurrently
+D. Threads have isolated memory and cannot communicate
+
+
+Which of the following must be unique for each thread in a
+process?
+A. Code
+-> B. Stack
+C. Heap
+D. Global variables
+
+
+alarmtest3.c -> void snooze should jump to where the main function was interrupted by the timer
+
+
+
+
+
+we add support for standard Unix signals to xv6. Refer to lectures, the textbook, and Linux man pages (man sigreturn), as well as this Linux Journal article article to learn more about signals.
+
+Pull the latest code from https://github.com/sysec-uic/xv6-public/, and switch to hw6.
+
+git pull origin
+git checkout hw6
+
+alarm() - send SIGALRM to a process after a time interval
+
+The template contains a default handler for all signals: kill the process. In this part, we implement a new system call ( alarm(seconds)), which sends SIGALRM to the calling process after the specified time interval.
+
+The program alarmtest1.c calls alarm(), then enters an infinite loop. A correct implementation of alarm() kills the process after the specified number of seconds has elapsed. You'll want to store the alarm time in the process (i.e., struct proc), then check if any process needs an alarm signal, every time the timer goes off. 
+signal() step 1 - change the disposition of a signal
+
+The signal() system call can be used to change the “disposition” of a signal, i.e., how the signal is handled when received. In this step, you need to support only SIG_DFL (=0, default) and SIG_IGN (=1, ignore). The template already has built-in handling for SIG_DFL (kill the process), so you need only support the configuration and “handle” signals with a SIG_IGN disposition.
+
+You'll want to store the "disposition" of each signal in proc.h, so that check_signals can act accordingly when a signal has arrived. 
+
+Test your implementation using alarmtest2.c.
+
+
+XV6 CHEAT SHEET — OS FINAL EDITION
+PROCESS & SCHEDULER
+Process States
+
+UNUSED → USED → SLEEPING → RUNNABLE → RUNNING → ZOMBIE.
+
+Process Structure (struct proc)
+
+trapframe → user registers saved during traps.
+
+pagetable → per-process address space.
+
+context → kernel registers for process switching.
+
+kstack → kernel-mode stack.
+
+state → scheduler state.
+
+parent, children.
+
+Scheduler (Round Robin)
+
+Infinite loop in scheduler() for each CPU:
+
+for(p in proc)
+    if(p->state == RUNNABLE)
+        switchuvm(); swtch(&cpu->context, &p->context)
+
+
+When a process yields or blocks → switch back to scheduler.
+
+ TRAP HANDLING (SYScalls, Interrupts, Exceptions)
+Trap Entry Flow
+
+User mode → trap → kernel mode:
+
+Hardware saves PC, mode bits.
+
+Jumps to trampoline.S → saves user registers to trapframe.
+
+Calls usertrap() (in kernel).
+
+In usertrap()
+
+Check trap cause:
+
+System call → syscall().
+
+Timer interrupt → yield().
+
+Fault → kill process.
+
+Trap Return
+
+usertrapret():
+
+Prepares trampoline code to restore user registers.
+
+Returns to user space via sret.
+
+ SYSTEM CALLS
+Path
+
+User libcall → ecall → kernel:
+
+user code →
+  ecall →
+    usertrap() →
+      syscall() →
+        sys_X() →
+          do X →
+      usertrapret() →
+user code
+
+How arguments are passed
+
+Syscall number: a7.
+
+Arguments: a0–a5.
+
+Return value: a0.
+
+Adding a system call
+
+Add to syscall.h.
+
+Add case statement in syscall.c.
+
+Implement sys_X() in sysproc.c or similar.
+
+Add user wrapper in user.h.
+
+CONTEXT SWITCHING
+Occurs inside scheduler(), sleep(), yield().
+Saving/restoring registers:
+
+Saved in struct context.
+
+swtch() switches kernel stacks and restores registers.
+
+VIRTUAL MEMORY
+Page table: Sv39
+
+3 levels: L2 → L1 → L0.
+
+VPNs indexed into PTEs.
+
+PTE flags: V R W X U G A D.
+
+User Memory Layout
+0 -----------------
+text
+data
+heap
+...
+stack (grows down)
+trapframe
+user trampoline (fixed high address)
+------------------ MAXVA
+
+Allocating memory
+
+sbrk() → growproc() → uvmalloc() / uvmdealloc().
+
+Copying memory across fork
+
+uvmcopy() copies page tables + memory.
+
+FORK / EXEC / WAIT
+fork()
+
+Allocate new proc.
+
+Copy parent's memory (uvmcopy).
+
+Copy trapframe.
+
+Set return value register (a0 = 0 in child).
+
+exec()
+
+Free old address space.
+
+Load ELF into memory.
+
+Set trapframe to point to new program’s entry.
+
+Setup user stack with args.
+
+exit()
+
+Close files.
+
+Mark as zombie.
+
+Wake parent.
+
+wait()
+
+Look for zombie children.
+
+Free child proc.
+
+FILE SYSTEM (XV6 FS)
+FS Layout
+| boot | superblock | log | inode blocks | bitmap | data blocks |
+
+Inode
+
+Metadata + 12 direct + 1 singly indirect pointer.
+
+Path lookup
+
+namei() → parse components:
+
+namei("/a/b/c"):
+  root → a → b → c
+
+
+dirlookup() used per level.
+
+File operations
+
+Open → file struct → inode + offset.
+
+Read/write → readi/writei → block cache.
+
+Buffer Cache (bcache)
+
+bread() / brelse().
+
+LRU-ish list, spinlocks per buffer.
+
+Logging Layer
+
+write-ahead log, transactions (begin_op(), end_op()).
+
+ LOCKING
+Spinlocks
+
+Used inside kernel where waiting would deadlock.
+
+Disable interrupts while holding.
+
+Sleeplocks
+
+For long operations (e.g., inode locks).
+
+Sleep instead of spinning.
+
+Uses internal spinlock + sleep/wakeup.
+
+sleep() / wakeup()
+
+sleep(chan, lock):
+
+Atomically release lock.
+
+Put proc on sleep queue.
+
+Switch to scheduler.
+
+wakeup(chan):
+
+Make all sleeping procs RUNNABLE.
+
+ PIPEs
+
+Circular buffer shared between two file descriptors.
+
+Synchronization:
+
+Readers sleep when no data.
+
+Writers sleep when full.
+
+Closed end wakes the other side.
+
+ ALARM / SIGNALS (MIT extension)
+When is a signal delivered?
+
+→ On trap return, inside usertrap().
+
+Alarm mechanism:
+
+Every timer interrupt increments ticks.
+
+When ticks % interval == 0:
+
+Save trapframe.
+
+Redirect PC to handler.
+
+sigreturn():
+
+Restore saved trapframe.
+
+ THREADS (uthread in user space)
+
+Cooperative: threads yield explicitly.
+
+Scheduler saves CPU registers in TCBs.
+
+ COMMON CODE PATHS TO REMEMBER
+System call
+user → ecall → usertrap → syscall → usertrapret → user
+
+Timer interrupt
+hardware → trampoline → usertrap → yield → scheduler
+
+fork
+allocproc → uvmcopy → copy trapframe
+
+exec
+uvmfree old → load ELF → set up stack → trapframe->pc = entry
+
+ SHORT LIST OF FUNCTIONS TO KNOW
+Process
+
+allocproc()
+
+scheduler()
+
+yield()
+
+sleep() / wakeup()
+
+VM
+
+walk()
+
+mappages()
+
+uvmalloc()
+
+uvmcopy()
+
+uvmfree()
+
+FS
+
+ialloc(), iupdate(), ilock(), iunlock()
+
+dirlookup(), namei()
+
+bread(), log_write()
+
+Traps
+
+usertrap()
+
+kerneltrap()
+
+usertrapret()
+
+syscall()
+
+
+File System:
+Disk → Buffer Cache → Log → Inodes → Directories → Pathnames → File Descriptors → System Calls.

@@ -1,0 +1,516 @@
+%%%%%%%% ICML 2026 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs} % for professional tables
+
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2026} with \usepackage[nohyperref]{icml2026} above.
+\usepackage{hyperref}
+
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% Use the following line for the initial blind version submitted for review:
+\usepackage{icml2026}
+
+% For preprint, use
+% \usepackage[preprint]{icml2026}
+
+% If accepted, instead use the following line for the camera-ready submission:
+% \usepackage[accepted]{icml2026}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{subfigure}
+\usepackage{longtable}
+\usepackage{adjustbox}
+\usepackage{booktabs} 
+\usepackage{multirow}
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Todonotes is useful during development; simply uncomment the next line
+%    and comment out the line below the next line to turn off comments
+%\usepackage[disable,textsize=tiny]{todonotes}
+\usepackage[textsize=tiny]{todonotes}
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{Fast Opponent Exploitation}
+
+\begin{document}
+
+\twocolumn[
+  \icmltitle{Fast Opponent Exploitation}
+
+  % It is OKAY to include author information, even for blind submissions: the
+  % style file will automatically remove it for you unless you've provided
+  % the [accepted] option to the icml2026 package.
+
+  % List of affiliations: The first argument should be a (short) identifier you
+  % will use later to specify author affiliations Academic affiliations
+  % should list Department, University, City, Region, Country Industry
+  % affiliations should list Company, City, Region, Country
+
+  % You can specify symbols, otherwise they are numbered in order. Ideally, you
+  % should not use this facility. Affiliations will be numbered in order of
+  % appearance and this is the preferred way.
+  \icmlsetsymbol{equal}{*}
+
+  \begin{icmlauthorlist}
+    \icmlauthor{Firstname1 Lastname1}{equal,yyy}
+    \icmlauthor{Firstname2 Lastname2}{equal,yyy,comp}
+    \icmlauthor{Firstname3 Lastname3}{comp}
+    \icmlauthor{Firstname4 Lastname4}{sch}
+    \icmlauthor{Firstname5 Lastname5}{yyy}
+    \icmlauthor{Firstname6 Lastname6}{sch,yyy,comp}
+    \icmlauthor{Firstname7 Lastname7}{comp}
+    %\icmlauthor{}{sch}
+    \icmlauthor{Firstname8 Lastname8}{sch}
+    \icmlauthor{Firstname8 Lastname8}{yyy,comp}
+    %\icmlauthor{}{sch}
+    %\icmlauthor{}{sch}
+  \end{icmlauthorlist}
+
+  \icmlaffiliation{yyy}{Department of XXX, University of YYY, Location, Country}
+  \icmlaffiliation{comp}{Company Name, Location, Country}
+  \icmlaffiliation{sch}{School of ZZZ, Institute of WWW, Location, Country}
+
+  \icmlcorrespondingauthor{Firstname1 Lastname1}{first1.last1@xxx.edu}
+  \icmlcorrespondingauthor{Firstname2 Lastname2}{first2.last2@www.uk}
+
+  % You may provide any keywords that you find helpful for describing your
+  % paper; these are used to populate the "keywords" metadata in the PDF but
+  % will not be shown in the document
+  \icmlkeywords{Machine Learning, ICML}
+
+  \vskip 0.3in
+]
+
+% this must go after the closing bracket ] following \twocolumn[ ...
+
+% This command actually creates the footnote in the first column listing the
+% affiliations and the copyright notice. The command takes one argument, which
+% is text to display at the start of the footnote. The \icmlEqualContribution
+% command is standard text for equal contribution. Remove it (just {}) if you
+% do not need this facility.
+
+% Use ONE of the following lines. DO NOT remove the command.
+% If you have no special notice, KEEP empty braces:
+\printAffiliationsAndNotice{}  % no special notice (required even if empty)
+% Or, if applicable, use the standard equal contribution text:
+% \printAffiliationsAndNotice{\icmlEqualContribution}
+
+\begin{abstract}
+  Safe Opponent Exploitation \citep{SOE} explores several algorithms intended for balance of exploration and exploitation, with the first with proven safety guarantees being ``Risk What You Won in Expectation," or RWYWE. This algorithm, like all from that paper, cannot be run at scale, because it requires an exact calculation of game value, and assessment of all possible actions. The new version proposed in this paper uses a transformer model to predict the opponent's strategy without maintaining a table or assessing all strategies. Instead of comparing to the optimal strategy, it compares to that of Monte-Carlo CFR. This allows for much faster playthroughs, and plays well in larger games, like Connect 4 and Hex. Experimental results are presented to support these claims.
+
+\end{abstract}
+
+
+
+%You can use footnotes\footnote{Footnotes should be complete sentences.}
+%to provide readers with additional information about a topic without
+%interrupting the flow of the paper. Indicate footnotes with a number in the
+%text where the point is most relevant. Place the footnote in 9~point type at
+%the bottom of the column in which it appears. Precede the first footnote in a
+%column with a horizontal rule of 0.8~inches.\footnote{Multiple footnotes can
+%  appear in each column, in the same order as they appear in the text,
+%  but spread them across columns and pages if possible.}
+%
+%\begin{figure}[ht]
+%  \vskip 0.2in
+%  \begin{center}
+%    \centerline{\includegraphics[width=\columnwidth]{figs/icml_numpapers.pdf}}
+%    \caption{
+%      Historical locations and number of accepted papers for International
+%      Machine Learning Conferences (ICML 1993 -- ICML 2008) and International
+%      Workshops on Machine Learning (ML 1988 -- ML 1992). At the time this
+%      figure was produced, the number of accepted papers for ICML 2008 was
+%      unknown and instead estimated.
+%    }
+%    \label{icml-historical}
+%  \end{center}
+%\end{figure}
+
+
+% Number figures sequentially, placing the figure number and caption \emph{after}
+% the graphics, with at least 0.1~inches of space before the caption and
+% 0.1~inches after it, as in \cref{icml-historical}. The figure caption should be
+% set in 9~point type and centered unless it runs two or more lines, in which
+% case it should be flush left. You may float figures to the top or bottom of a
+% column, and you may set wide figures across both columns (use the environment
+% \texttt{figure*} in \LaTeX). Always place two-column figures at the top or
+% bottom of the page.
+
+
+
+
+
+
+
+
+% Citations within the text should include the authors' last names and year. If
+% the authors' names are included in the sentence, place only the year in
+% parentheses, for example when referencing Arthur Samuel's pioneering work
+% \yrcite{Samuel59}. Otherwise place the entire reference in parentheses with the
+% authors and year separated by a comma \cite{Samuel59}. List multiple references
+% separated by semicolons \cite{kearns89,Samuel59,mitchell80}. Use the `et~al.'
+% construct only for citations with three or more authors or after listing all
+% authors to a publication in an earlier reference \cite{MachineLearningI}.
+
+% Authors should cite their own work in the third person in the initial version
+% of their paper submitted for blind review. Please refer to \cref{author info}
+% for detailed instructions on how to cite your own papers.
+
+% Use an unnumbered first-level section heading for the references, and use a
+% hanging indent style, with the first line of the reference flush against the
+% left margin and subsequent lines indented by 10 points. The references at the
+% end of this document give examples for journal articles \cite{Samuel59},
+% conference publications \cite{langley00}, book chapters \cite{Newell81}, books
+% \cite{DudaHart2nd}, edited volumes \cite{MachineLearningI}, technical reports
+% \cite{mitchell80}, and dissertations \cite{kearns89}.
+
+\section{Introduction}
+
+\emph{Safety}, in the context of algorithms for two-player zero-sum games, is achieved when at least the value of the game is guaranteed regardless of the strategy used by the opponent. This has been shown to be possible to ensure without strict adherence to strategies equivalent to Nash equilibrium, as some strategies result in non-equilibrium \emph{exploitation} being the more profitable strategy. A strategy's \emph{exploitability} is a measure of how prone it is to being exploited, which gets higher as it veers further from equilibrium. 
+
+It was only recently shown \cite{SOE} that strategies other than equilibrium can be safe, specifically when the opponent has played suboptimally to such an extent that the `gifts' they've given outweigh the potential exploitability of all counterstrategies against it. Formally, a gift strategy $\sigma_{-i}$ is one where there exists an equilibrium strategy $\sigma_i^*$ for the player such that $\sigma_{-i}$ is not a best response to $\sigma_i^*$.
+
+This paper revolves around general decision algorithms for imperfect information games. Such algorithms attempt to get as close as possible to a solution known as a Nash Equilibrium. In most cases, finding a full solution is computationally intractible, and approximations must be calculated. Many algorithms exist for this purpose, including minimax and its generalizations, and the CFR family. The original framework is mathematically cleanest in the exact setting, but practical implementations must compromise, with inexact equilibrium. These competing needs are the focus of this algorithm, and the rest of this paper. 
+
+Implementations and experiments are done in openspiel, all written in python. 
+
+\section{Background}
+
+A representation of a game must show who the players are, their available actions, the values they assign to each action, and the available per-player knowledge. A normal form game is the simplest possible, using a matrix of tuples to show the outcome of each possible pair of moves for each player. These can only represent a single decision for each player, which makes for unwieldy representations of multi-stage games. Extensive Form Games are represented as a tree, allowing successive actions to be informed by the opponent's prior actions, certain game elements to be hidden from some players, and chance nodes to make random traversals through layers of the tree. This algorithm functions on the latter representation. 
+
+Formally, Extensive Form Games are generally defined as tuples $(N, H, P, f_c, I, u_i)$. $N$ is the set of all players, which can be any finite size greater than 1. $H$ is a set of action histories, which include all partial and complete playthroughs of the game. $Z \subseteq H$ are the terminal histories. $P$ is the player function, which associates each history with a player that is next to take an action. The chance function $f_c$ gives a probability distribution of actions for every history, representing the chance player. $u_i$ is the utility function mapping terminal states to utilities on the real numbers. It is assumed that all players have perfect recall (all histories are never forgotten), all histories are finite, and terminal utilities are zero sum (all player's utilities at any terminal history sum to zero). 
+
+In extensive-form games, the agent observes a subset of the full game state $I$, which consists of the complete history to that point through that player's perspective. This is represented as a tensor in openspiel, encoding public actions, private cards, and overall betting history as a fixed-length vector. The opponent model uses this vecotr as its input, outputting the probability distribution of the opponent's next likely actions.
+
+Behavior in a game can be represented as a \textit{pure strategy}, which is a deterministic prescription of which move to make for every node on the game tree. A \textit{mixed strategy} is a probability distribution over possible moves, or pure strategies.
+
+Formally, exploitability of a player $i$'s strategy $\sigma_i$ can be defined using the best response and game value. Player $i$'s \textit{best response} to opponent strategy $\sigma_{-i}$ is any strategy in \[ \arg\max_{\sigma'_i \in \Sigma_i}(u_i(\sigma'_i, \sigma_{-i}))\] where $u_i$ is the utility function. A \textit{Nash Equilibrium} is a strategy profile $\sigma$ where every player's strategy $\sigma_i$ is a best response to $\sigma_{-i}$ for every $i$. The game value $v$ is \[v = \max_{\sigma_1 \in \Sigma_1} \min_{\sigma_2 \in \Sigma_2} u_1(\sigma_1, \sigma_2)     \] %give more motivation for these terms
+
+The exploitability is thus \[\text{expl}(\sigma_i) = v_i - \min_{\sigma'_{-i}}u_i(\sigma_i, \sigma'_{-i})\]
+
+
+This algorithm is \textit{online}, meaning it updates incrementally as new data is gathered. It functions on \textit{repeated games}, where an individual \textit{stage game} is repeated for a finite number of iterations. These allow for infosets composed of previous games, which can inform one's strategy by considering how the opponent has played in the past.   %give more motivation for these terms
+
+
+\subsection{Risk What You've Won In Expectation}
+
+The central goal of the coming algorithm is to balance exploitation of suboptimal strategies with safety from potential future changes in strategy or misreads. 
+
+To begin with, consider a simpler strategy called \emph{Risk What You've Won}. This is a basic, unsafe algorithm for exploitation of suboptimal strategies. It consists of constructing a model of possible opponent strategies, and a constant $\varepsilon$ representing the current possible exploitability. Specifically, $\varepsilon$ is the cumulative payoff minus $(t-1)v*$, where $t$ is the current timestep and $v*$ is the value of the stage game under minimax. From this, a collection of strategies $\text{SAFE}_\varepsilon$ is defined, and of those the best-response is found to the opponent model. 
+
+A slight alteration is needed to make this method safe. The $\varepsilon$ must be calculated using the expected payoff under the current mixed strategy, not the realized payoff at that point. Sampling only realized payoff makes the algorithm sensitive to noise, which can allow the $\varepsilon$ to be arbitrarily higher than the actual amount that can be safely wagered. 
+
+This algorithm is not runnable at scale due to multiple major computations. Rendering the opponent model requires assessing all possible opponent strategies, which is intractible and nonobvious for games of even moderate size. This must be done to define the contours of the set of safe strategies $SAFE(k^t)$, which should be the only strategies assessed to select a best response against the opponent model. Finding the game value ($v^*$) under minimax is also intractable, as it requires traversing the entire game tree and finding the equilibrium, which balloons exponentially. Changes must be made to both of these methods in order to run the algorithm on games of larger size.
+
+The initial method can be simply shown to be unsafe by considering an example strategy in rock paper scissors. Assume you start with a uniform random strategy, and the opponent plays rock without loss of generality. The expected payoff is zero, as it would be against any strategy. If you play rock or scissors, the strategy remains the same, but on paper the strategy switches to only using that. If the opponent's strategy from here is to play scissors uniformly then switch back to uniform random, then you are guaranteed to lose the second round. This happens in 1/3 of cases, so the expected payoff in the second round is $\frac{1}{3}(-1) + \frac{2}{3}\cdot0 = -\frac{1}{3}$. In all subsequent rounds the expected payoff is zero, so the total expected payoff from that point is $-\frac{1}{3}$, making the strategy unsafe.
+
+
+\begin{algorithm}[tb]
+ \caption{Risk What You’ve Won in Expectation (RWYWE)}
+ \label{alg:example}
+ \begin{algorithmic}
+   % \STATE {\bfseries Input:} data $x_i$, size $m$
+   \SET v $\leftarrow$ game value to player
+   \SET k$^1$ $\leftarrow$ 0
+   \FOR{$t=1$ {\bfseries to} $T$}
+      \SET $\pi^t \leftarrow$ argmax$_{\pi \in \text{SAFE}(k^t)}M(\pi)$
+      
+      Play action $a^t_i$ according to $\pi^t$
+      
+      Opponent plays action $a^t_i$ according to unobserved distribution $\pi^t_{-i}$
+      
+      Update $M$ with opponent's actions, $a^t_{-i}$
+      
+      $k^{t+1} \leftarrow k^t + u_i(\pi^t_i, a^t_{-i}) -v$
+   \ENDFOR
+ \end{algorithmic}
+\end{algorithm}
+
+
+
+\section{Methodology}
+
+\subsection{Opponent Model}
+
+To determine the opponent model, this algorithm uses a neural network to approximate it, instead of manually assessing all possible strategies \citep{OppModel}. The model outputs a single strategy, instead of a collection of possible strategies. The input is an information state, and the output is a probability distribution over the possible actions. The lack of a SAFE set makes a complete assessment of strategy safety impossible, but this sacrifice is necessary for the algorithm to scale.
+
+The implementation is a fairly straightforward three-layer MLP, via pytorch. It trains with the cross-entropy loss between the observed opponent's moves at a given infostate and the model's prediction of what it will be. The intermediate layers are sized 128 and 64, and the output layer is normalized via softmax. The learning rate is variable, set with an Adam optimizer. The original paper did not give a concrete implementation for their opponent model, but the safety guarantee implies it should assess all possible strategy profiles, and assume the use of the worst-case scenario given the current information. This method doesn't do that, which can potentially leave room for exploitation, but other failsafes mitigate this somewhat.
+
+The opponent model is trained online during play. After each opponent action, the pair $(I, a)$ of the opponent's infoset at that point and the action they took, is stored in memory. This memory is used to update the model by gradient descent using cross-entropy loss. Only a constant number of recent actions are included in the training data, forming a replay buffer of maximum size 10,000. From this, batch sizes are 32. This strikes a balance between prioritizing more recent data and maintaining a steady strategy in the face of random variance inherent to mixed strategies. The network uses two hidden layers with standard ReLU activations. 
+
+\subsection{Game Value}
+
+To select the strategy, an $\varepsilon$-safe best response must be found to the opponent model. There exists a set of strategies, $SAFE(\varepsilon_t)$, which contains all with exploitability less than $\varepsilon$, meaning the payoff against all pure strategies is at least $v^* - \varepsilon$. This set can be found via linear programming, however this problem is largely intractable.
+
+Instead of this, to approximate the game value, this algorithm uses MC-CFR \citep{MCCFR} to find the move it will deem ``optimal," and compare the move with best exploitability to. The actual optimal strategy is probably missed, so the algorithm also estimates a value for possible variance, based on the desired confidence region. The optimal value used is the top of this confidence region. The MC-CFR implementation used takes a variable number iterations $i$ to train, which is the bulk of the time complexity of the algorithm for most amounts. This is fairly underpowered at low values of $i$, but the buffer provided by the variance calculation makes it a reasonable baseline. This algorithm has far better outcomes than the baseline MC-CFR, as detailed in Table 3 below. It cannot do worse than MC-CFR, as it defaults back to it when safety cannot be guaranteed beyond the margin of error. 
+
+
+\begin{algorithm}[tb]
+ \caption{Risk What You’ve Won in Expectation (RWYWE): Faster Version}
+ \label{alg:example}
+ \begin{algorithmic}
+   % \STATE {\bfseries Input:} data $x_i$, size $m$
+   \SET v $\leftarrow$ game value to player
+   \SET k$^1$ $\leftarrow$ 0
+   \SET $M \leftarrow$ neural network to approximate opponent 
+   
+   \hspace{12mm}behavior
+   \FOR{$t=1$ {\bfseries to} $T$}
+      \SET $\pi^t \leftarrow$ MCCFR-chosen baseline move.
+      \SET $\pi^t \leftarrow$ max($\pi^t$, argmax$_{\pi \in \text{random subset of SAFE}(k^t)}M(\pi)$)
+      
+      Play action $a^t_i$ according to $\pi^t$
+      
+      Opponent plays action $a^t_i$ according to unobserved distribution $\pi^t_{-i}$
+      
+      Update $M$ with opponent's actions, $a^t_{-i}$
+      
+      $k^{t+1} \leftarrow k^t + u_i(\pi^t_i, a^t_{-i}) -v$
+   \ENDFOR
+ \end{algorithmic}
+\end{algorithm}
+
+
+\section{Experiment}
+
+I compared the new algorithm to three others: Opponent Pruning Paranoid Search (OPPS), $max_n$, and Outcome-Sampling Monte-Carlo Counterfactual-Regret Minimization (OS-MC-CFR). OS-MC-CFR is fast, but requires the additional time of building the model, which is given in the below table. Here, the opponent played against is random, so it is possible for a model to score higher than equilibrium in expectation if it does a sufficiently good job at opponent exploitation. In the other table, data is given for play against an OS-MC-CFR agent with 100 iterations, to test against a less exploitable opponent. Notably, the algorithm is not compared to the original RWYWE, as that algorithm is reliant on a total game solver, which is not within the scope of this analysis for most games featured here. For Kuhn Poker, RWYWE takes 1.252ms per iteration for returns of 0.2404, which is only marginally better than the new version, and much slower even in this very simple game.
+
+\
+
+The new changes to RWYWE make the algorithm much more scalable with only modest dropoff in both exploitation and equilibrium convergence. It takes longer to run on Kuhn Poker, and presumably other extremely simple games, but takes a similar length of time for Liar's Dice. For games beyond that, the methods that traversed the entire game tree were unable to run in any reasonable amount of time, and the MC-CFR methods took a similar amount of time (to be expected, since it is called by the new algorithm), but had far worse performance. Against stronger opponents, RWYWE performs worse in Kuhn Poker, and presumably other very small games, but beats all versions of MC-CFR in games larger than that, sometimes by a commanding margin, including those with many more regret accumulation steps than its baseline.
+
+This new system is only as safe as its MC-CFR baseline, which can converge to a totally safe equilibrium on sufficiently many iterations, but is not taken to this extent in the demonstrated experiments. CFR has a regret bound of $O(1/\sqrt{T})$, where $T$ is the number of training iterations. MC-CFR has similar asymptotic behavior, but the random variance means that this is a trend, not a guarantee. The original algorithm guarantees at least the maintenence of the game value $v$, but this one trends toward maintaining at least $v - O(1/\sqrt{T})$. 
+
+\section{Conclusion}
+
+The proposed algorithm allows for opponent exploitation at or beyond that of an equilibrium or near-equilibrium solution, while playing competitively against a suite of benchmark algorithms, including instances of MC-CFR with more regret accumulation than that used by it as a baseline. This algorithm performs strongly even in large games like Hex, which is a strong improvement on exploitation algorithms in the existing literature.
+
+
+\begin{table}[t]
+  \caption{Average runtime per round in milliseconds by game and method. For MCCFR, regret accumulation time given on the left, when higher than ten milliseconds. 5000 iterations per game, 1000 for Hex.}
+  \label{sample-table}
+  \begin{center}
+    \begin{small}
+      \begin{sc}
+      \begin{adjustbox}{width=\linewidth}
+        \begin{tabular}{lccccr}
+          \toprule 
+          Game                & $\text{RWYWE}_2$       & OPPS         & $max_n$      & MCCFR (100) & MCCFR (1000)  \\ 
+          \midrule
+           Kuhn Poker  & 0.53  &  0.1   & 0.086 & .05          &   .049        \\ 
+           Liar's Dice & 37.36 &  37.32 & 1.76  &  25, 0.074   & 256, 0.079    \\   
+           Tic-Tac-Toe & 15.47 &  2230  & 2190  & 44, 0.12     &  415, 0.12    \\   
+           Connect 4   & 74.3  &  -     & -     &  115, 0.29   &  1256, 0.3    \\
+           Hex         & 3760  &   -    & -     &  1673, 1.99  &  17825, 2.23  \\
+          \bottomrule
+        \end{tabular}
+        \end{adjustbox}
+      \end{sc}
+    \end{small}
+  \end{center}
+  \vskip -0.1in
+\end{table}
+
+
+\begin{table}[t]
+  \caption{Average return by game and method against MC-CFR players of varying iterations, modelling performance against a strong opponent. 5000 iterations per game, 1000 for Hex}
+  \label{sample-table}
+  \begin{center}
+    \begin{small}
+      \begin{sc}
+      \begin{adjustbox}{width=\linewidth}
+        \begin{tabular}{lccccr}
+          \toprule 
+Game & MCCFR (100) & MCCFR (500) & MCCFR (2000) & MCCFR (5000) & Best Response \\ 
+\midrule 
+Kuhn Poker         & 0.048 & 0.089 & -0.022 & -0.044 & -0.038      \\ 
+Leduc Poker        & 1.329 & 0.937 &  0.383 & -0.017 & -1.512      \\ 
+Tic-Tac-Toe        & 0.868 & 0.875 &  0.854 & 0.842  & -0.682      \\ 
+Liar's Dice        & 0.733 & 0.710 &  0.661 & 0.647  & -      \\ 
+Connect 4          & 0.875 & 0.879 &  0.862 & 0.841  & -      \\ 
+Hex                & 0.962 & 0.759 &  0.802 & 0.680  & -      \\ 
+          \bottomrule
+        \end{tabular}
+        \end{adjustbox}
+      \end{sc}
+    \end{small}
+  \end{center}
+  \vskip -0.1in
+\end{table}
+
+
+
+
+\begin{table}[t]
+  \caption{Average return by game and method against random player, modelling exploitation of a weak opponent. 5000 iterations per game, 1000 for Hex}
+  \label{sample-table}
+  \begin{center}
+    \begin{small}
+      \begin{sc}
+      \begin{adjustbox}{width=\linewidth}
+        \begin{tabular}{lccccr}
+          \toprule 
+   Game                  & $\text{RWYWE}_2$   & OPPS         & $max_n$      & MCCFR (100) & MCCFR (1000)  \\
+Kuhn Poker           & 0.233     & 0.279    & 0.279  &  0.077  &  0.1854      \\
+Liar's Dice          & 1         & 1        & 0.825  &  0.110  &  0.1934      \\
+Tic-Tac-Toe          & 0.8845    & 1        & 1      &  0.23   &  0.353       \\
+Connect 4            & 0.848     & -        & -      &  0.12   &  0.1407     \\ 
+Hex                  & 0.9       & -        & -      &  0.1    &  0.045       \\
+          \bottomrule
+        \end{tabular}
+        \end{adjustbox}
+      \end{sc}
+    \end{small}
+  \end{center}
+  \vskip -0.1in
+\end{table}
+
+
+\begin{table}[t]
+  \caption{Exploitability by method in Leduc Poker}
+  \label{sample-table}
+  \begin{center}
+    \begin{small}
+      \begin{sc}
+      \begin{adjustbox}{width=\linewidth}
+        \begin{tabular}{lccccr}
+          \toprule 
+   Game & Random                  & MCCFR(1000)   & MCCFR(5000)         & RWYWE  \\
+   Kuhn Poker & 0. 0.4583 & 0.09359 & 0.0389 & 0.0338 \\
+   Leduc Poker & 2.373611 & 2.408111 & 1.553866 & 1.392849
+          \bottomrule
+        \end{tabular}
+        \end{adjustbox}
+      \end{sc}
+    \end{small}
+  \end{center}
+  \vskip -0.1in
+\end{table}
+
+% \section*{Software and Data}
+
+% If a paper is accepted, we strongly encourage the publication of software and
+% data with the camera-ready version of the paper whenever appropriate. This can
+% be done by including a URL in the camera-ready copy. However, \textbf{do not}
+% include URLs that reveal your institution or identity in your submission for
+% review. Instead, provide an anonymous URL or upload the material as
+% ``Supplementary Material'' into the OpenReview reviewing system. Note that
+% reviewers are not required to look at this material when writing their review.
+
+
+\
+\
+
+
+
+
+% Kuhn Poker has a relatively simple solution. For player 1, there is an infinite family of possible solutions based on a single parameter $\alpha \in [0,\frac{1}{3}]$, but for player 2, there is one single solution. 
+
+
+% \begin{tabular}{|c|c|c|c|c|}
+%                       \hline
+%            History &  [$\varnothing$] & [Check] & [Bet] & [Check, Bet] \\  
+%            Options  & (Check, Bet) & (Check, Bet) & (Call, Fold) & (Call, Fold) \\ \hline
+%            1K & $(1-3\alpha$, $3\alpha)$ & & & $(1,0)$   \\  \hline
+%            1Q & $(1, 0)$                 & & & $(\frac{1}{3} + \alpha,\frac{2}{3} - \alpha)$   \\  \hline
+%            1J & $(1-3\alpha$, $3\alpha)$ & & & $(0,1)$   \\  \hline
+%            2K &                          & $(0,1)$                     & $(1,0)$                     & \\  \hline
+%            2Q &                          & $(1,0)$                     & $(\frac{1}{3},\frac{2}{3})$ & \\  \hline
+%            2J &                          & $(\frac{2}{3},\frac{1}{3})$ & $(0,1)$                     & \\  \hline
+% \end{tabular}
+
+% \section*{Impact Statement}
+
+% Authors are \textbf{required} to include a statement of the potential broader
+% impact of their work, including its ethical aspects and future societal
+% consequences. This statement should be in an unnumbered section at the end of
+% the paper (co-located with Acknowledgements -- the two may appear in either
+% order, but both must be before References), and does not count toward the paper
+% page limit. In many cases, where the ethical impacts and expected societal
+% implications are those that are well established when advancing the field of
+% Machine Learning, substantial discussion is not required, and a simple
+% statement such as the following will suffice:
+
+% ``This paper presents work whose goal is to advance the field of Machine
+% Learning. There are many potential societal consequences of our work, none
+% which we feel must be specifically highlighted here.''
+
+% The above statement can be used verbatim in such cases, but we encourage
+% authors to think about whether there is content which does warrant further
+% discussion, as this statement will be apparent if the paper is later flagged
+% for ethics review.
+
+% In the unusual situation where you want a paper to appear in the
+% references without citing it in the main text, use \nocite
+\nocite{langley00}
+
+\bibliography{example_paper}
+\bibliographystyle{icml2026}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\appendix
+\onecolumn
+\section{You \emph{can} have an appendix here.}
+
+You can have as much text here as you want. The main body must be at most $8$
+pages long. For the final version, one more page can be added. If you want, you
+can use an appendix like this one.
+
+The $\mathtt{\backslash onecolumn}$ command above can be kept in place if you
+prefer a one-column appendix, or can be removed if you prefer a two-column
+appendix.  Apart from this possible change, the style (font size, spacing,
+margins, page numbering, etc.) should be kept the same as the main body.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was created
+% by Iain Murray in 2018, and modified by Alexandre Bouchard in
+% 2019 and 2021 and by Csaba Szepesvari, Gang Niu and Sivan Sabato in 2022.
+% Modified again in 2023 and 2024 by Sivan Sabato and Jonathan Scarlett.
+% Previous contributors include Dan Roy, Lise Getoor and Tobias
+% Scheffer, which was slightly modified from the 2010 version by
+% Thorsten Joachims & Johannes Fuernkranz, slightly modified from the
+% 2009 version by Kiri Wagstaff and Sam Roweis's 2008 version, which is
+% slightly modified from Prasad Tadepalli's 2007 version which is a
+% lightly changed version of the previous year's version by Andrew
+% Moore, which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.

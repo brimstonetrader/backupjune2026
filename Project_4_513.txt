@@ -1,0 +1,9 @@
+I made a decision tree classifier for the Mental Health Dataset. 
+
+The first change I made to the dataset was to merge 'Academic Pressure' and 'Work Pressure' to 'Pressure', and merge 'Study Satisfaction' and 'Job Satisfaction' into 'Satisfaction.' From this I dropped the small remaining amount of NaN values. 
+
+After this, I rounded all GPA values to the nearest integer, and replaced the NaNs in the 'Profession' column with "Student" and the rounded GPA. This only applied to students, the working professionals with NaN in that column were set to "Unemployed." After this, I encoded all strings as integers, so that the scikitlearn Decision Tree library could use the dataset. I was left with four columns with NaNs, which I removed. 
+
+I then split the data into training and test sets, and gave the model access to all variables except "Depression," which was its target. After training, my classifier predicted depression with 90.3% accuracy. This is better than many doctors, and with more data or fine-tuning it is possible that accuracy could grow much larger. 
+
+The model's shortcomings, in addition to the inherent limitations of finite data, are general to decision trees. It is possible that it is overfit on this dataset, and that new patients could face poorer results. Additionally, depressed people are only 1/6th of the dataset, so it's possible that it often defaults to a negative diagnosis, because that is the most probable outcome. Nevertheless, this model is very accurate, and in general decision trees are a good tool for this sort of problem.

@@ -1,0 +1,10 @@
+MIT
+Stanford
+Princeton
+Berkeley
+Columbia
+UChicago
+CMU
+UIUC
+GA Tech
+Harvard

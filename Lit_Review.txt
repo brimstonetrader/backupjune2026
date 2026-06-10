@@ -1,0 +1,3 @@
+Most generalized strategies for zero sum games assume the opponent to be optimal. This assumption varies from uncommon to almost impossible as complexity of the game increases. Thus, methods have emerged to exploit suboptimal strategies, without necessarily maintaining a perfect equilibrium.
+
+Ganzfried and Sandholm's 2014 paper "Safe Opponent Exploitation" explores such strategies by bounding the extent to which one can deviate from equilibrium while remaining "safe". This is possible whenever one can exploit the opponent to a greater extent than the equilibrium, while guaranteeing that the game value does not fall under its starting position in the worst case.

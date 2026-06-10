@@ -1,0 +1,280 @@
+Michael Sullins, Nora Morris
+Counterfactual Regret Minimization and Variants
+1
+
+Games - Normal Form
+A normal form game is one in which both players have a single choice between a set of actions.
+Each pair of possible choices designated with two payoffs, one for each player. 
+These are usually represented by a matrix, with both payoffs in each cell. 
+2
+Test words
+
+Games - Extensive Form
+The game proceeds in several stages. 
+These are often represented as trees, branching at each turn for each possible choice the player can make. 
+These can generalize to any $n$ players, alternating by depth level. 
+Terminal nodes have an $n$-tuple of payoffs.There can also be chance nodes, which descend down the tree according to a preset probability distribution. 
+These represent imperfect information withina game, which makes them much more difficult to solve.
+3
+Test words
+
+Nash Equilibria
+A Nash Equilibrium is a solution to any game.
+Both players have selected strategies in which any deviation by either player causes them to perform worse in expectation.
+Can be pure or mixed strategy.
+Every game has at least one.
+
+4
+Test words
+
+Exploitability
+For any strategy, a method of measuring nearness to Nash Equilibrium.
+The difference of the value of the game position and the utility of the strategy. (σ = strategy profile, i = player, u = utility function)
+
+
+
+If all strategies have zero exploitability, by definition the set is a Nash Equilibrium.
+Total exploitability is always nonnegative.
+5
+Test words
+
+Regret
+Another way of quantifying how far a strategy veers from equilibrium
+
+For time-step T, strategy σ, and player i, and utility function u, 
+
+
+
+
+
+This can be thought of as the effectiveness of the best response against the opponent strategy minus that of the actual strategy used. 
+
+
+6
+Test words
+
+Types of Regret
+Instantaneous Regret:
+This measures how much better a player would have performed at that iteration if they had committed to some fixed alternative strategy while the opponent stayed the same.
+
+Cumulative Regret: 
+This combines instantaneous regret across all T iterations and compares performance to what would have been the best fixed strategy in hindsight. It captures how much was lost by not committing to the single best deviation from the beginning.
+
+Average Regret:
+Normalizes cumulative regret by the number of iterations. 
+7
+Test words
+
+Counterfactual Regret
+
+
+
+This is regret at a single information set I, measuring how much better an action would have could have been if I were reached. 
+
+It is weighted by the probability the infoset is reached (       is the counterfactual reach probability). 
+
+
+
+8
+Test words
+
+Regret Matching
+This algorithm is online, which means it improves and changes its behavior as it runs. 
+Each turn, the algorithm collects all possible payoffs for actions, and calculates the cumulative regret for each one.
+The algorithm then chooses the next action by assigning probabilities according to their positive cumulative regret, divided by the sum of all regrets, excluding those with negative regret.
+This algorithm guarantees sublinear regret, which means it steadily shrinks per-round, eventually to zero.
+9
+Test words
+
+Regret Matching+ 
+A slight variation, which can be used in CFR.
+Negative cumulative regrets are set to zero after every update, instead of just when computing the next strategy.
+This makes unwanted actions more easily able to become favorable later, if conditions change, allowing more dynamic learning.
+10
+Test words
+
+Counterfactual Regret Minimization - Motivation
+Before CFR, the best algorithm for solving an imperfect information game was linear programming on a standardized representation of the game.
+At the time the original paper was published this could solve a game abstracted down to approximately 107 states in a tractable amount of time. 
+CFR, on the other hand, can solve games with 1012 states, which allows for competent automated playing of forms of Poker relevant to humans, with the help of abstractions. 
+11
+Test words
+
+Counterfactual Regret Minimization - Algorithm - 1
+Regret Matching is applied locally at each infoset, using counterfactual regret.
+A table is maintained of regrets for each infoset and action, and all are updated on every iteration of training.
+A second table is maintained of all previous strategies, which are normalized, and tend toward equilibrium.
+12
+Test words
+
+function CFR(state, i, pi1, pi2):
+  if state is terminal:
+    return payoff_p1(state)     
+
+  if state is chance:
+    return sum((probability(outcome) * CFR(next(state,outcome), i, pi1, pi2)) for all outcomes)
+
+  p = player_to_act(state) ; I = infoset_of(p, state) ; A = legal_actions(state) ; sigma = [0]* len(A)
+
+  # regret-matching
+  pos = [max(RegretSum[I][a], 0) for a in A]
+  S = sum(pos[a] for a in A)
+  for a in A: if S > 0: sigma[a] = pos[a] / S else sigma[a] = 1 / |A|
+
+  for a in A: #recurse on each action
+    if p == 1: v_a[a] = CFR(next(state,a), i, pi1 * sigma[a], pi2)
+    else:      v_a[a] = CFR(next(state,a), i, pi1, pi2 * sigma[a])
+
+  v = sum(sigma[a] * v_a[a] for a in A) #node value under current strategy
+  me,you = (pi1,pi2) if p==1 else (pi2,pi1)  #reach-prob factors
+
+  if p == i:
+    for a in A:
+      RegretSum[I][a]   += you * (v_a[a] - v)
+      StrategySum[I][a] += me  * sigma[a]
+
+  return v
+13
+function TRAIN_CFR(T):
+  initialize RegretSum, StrategySum to 0 for all infosets/actions
+  for t = 1..T:
+    for i in {1,2}:   # update both players each iteration
+      CFR(state = ROOT, i, pi1 = 1, pi2 = 1)
+  return AverageStrategy = normalize(StrategySum) per infoset
+
+Test words
+
+Counterfactual Regret Minimization - Performance
+The total time complexity is linear in the number of histories, and the memory complexity is linear in the number of information set-action pairs. 
+This is demanding, but convergence to equilibrium occurs in $O(1/\sqrt{T})$, with $T$ being the number of iterations, measured in average regret. 
+This holds independently of branching structure, outside of linear dependence on the number of infosets. 
+Because this algorithm requires only maintaining two tables, the individual regret compilations can be parallelized. 
+
+
+14
+Test words
+
+Counterfactual Regret Minimization - Applications
+CFR was used to find a near equilibrium to heads-up limit Texas Hold'em.
+This game has around 10^18 game states, but abstraction can bring that number down to 10^12 game states and 10^8 information sets.
+After billions of iterations, the resulting strategy had exploitability of approximately two millibets per hand. 
+Cepheus is a very high-powered implementation that has come within a thousandth of the GTO expected value for heads-up limit Texas hold ‘em, close enough that the University of Alberta declared further work on the game “pointless”.
+Most high-level Poker AIs use some variant of this algorithm, like Deepstack and Pluribus.
+
+15
+Test words
+
+Lazy Counterfactual Regret Minimization - Motivation
+Experimentally, it has been shown that regret in strategies used by CFR is far lower than the theoretical upper bound  (              ).
+Standard CFR treats all infosets independently and pessimistically. The bound sums all information sets' counterfactual regrets, giving the worst case time complexity linear in I.
+Most sets have extremely small reach probability, meaning their regret contribution is near zero and negligible.
+16
+Test words
+
+Lazy Counterfactual Regret Minimization - Changes to Algorithm
+In Vanilla CFR, cumulative regret is calculated independently for every available information set, weighted by the opponent and probability that it is reached. 
+Lazy CFR groups multiple iterations together, not updating totals until the probability of reaching the infoset reaches a set threshold, often 1.
+The resulting regret bound depends on the 
+17
+Test words
+
+Lazy Counterfactual Regret Minimization - Performance
+Assuming a balanced tree, the number ofinfosets traversed every iteration is O(sqrt(I)).
+The per-round runtime improvement is roughlyO(sqrt(I) / log(I)).
+It converges faster than Monte Carlo CFR when using Regret Matching+.
+18
+Test words
+
+Monte Carlo Counterfactual Regret Minimization - Motivation
+The regret updates used by CFR are expectations over terminal histories, which can be estimated through sampling without bias. 
+MCCFR samples some subset of histories, which match the Vanilla CFR updates in expectation, preserving the convergence guarantees.
+This scales the counterfactual values by the probability that they were chosen, but the proportions are the same.
+There are several sampling schemes, of varying degrees of liberality.
+19
+Test words
+
+Monte Carlo CFR - Types of Sampling 1
+Chance Sampling
+Only chance nodes are sampled, leaving all player nodes to be fully explored.
+
+External Sampling 
+Both chance nodes and the opponent’s actions are sampled, but the traversing player’s actions are fully enumerated.
+
+Outcome Sampling
+A single trajectory from the root to a terminal history z is sampled on each iteration, including chance and both players’ actions.
+20
+Test words
+
+Monte Carlo CFR - Average Strategy Sampling
+Every strategy is sampled
+with the following 
+probability, using the cumulative strategy profile. 
+
+At opponent and chance nodes, a single action is sampled according to chance probabilities and current opponent strategy profile.
+This has a tighter regret bound than the others.
+21
+Test words
+
+Monte Carlo CFR - Performance
+The primary advantage of Monte Carlo CFR over Vanilla CFR is the reduction in per-iteration traversal cost.
+The amount of iterations needed for convergence is similar, but time-per-iteration is much smaller.
+The sampling schemes have variable variance-cost tradeoffs
+All make it far more feasible to solve games too large to iterate through.
+22
+Test words
+
+Deep CFR - Motivation
+Abstraction is an arduous process which necessarily loses information that can sometimes be relevant to the ideal strategy at a point.
+
+One solution is to approximate what CFR would return at a given infoset, using neural networks.
+23
+Test words
+
+Deep CFR - Changes to Algorithm
+Similar to external sampling MCCFR
+Each iteration does K partial traversals. At each I, it plays a strategy σt (I) determined by regret matching on the output of a neural network (V : I -> R|A|) Terminal regrets are passed up the tree, and saved to a memory.
+Once the player's traversals are completed, a new network is trained from scratch by minimizing the error between the predicted regret for a given information set and samples of instantaneous regret found in the memory. 
+Policy network 
+A memory Mπ is maintained of infoset probability vectors for both players, updated each time an infoset belonging to any player is traversed during sampling. Mπ is used to train the model and approximate the strategies of all players, enabling equilibrium computations.
+24
+Test words
+
+Deep CFR - Performance/Applications
+The NN architecture introduces an additional error term into the regret analysis. The resulting bound retains the O(1 / sqrt(T)) structure of CFR but includes a reach-weighted function-approximation component. 
+It was evaluated in large poker instances, particularly heads-up flop hold'em  and heads-up limit Texas hold'em, which had trillions and quadrillions of nodes respectively. It converged after fewer traversals than a strong abstraction, while maintaining similar exploitability. 
+25
+Test words
+
+Method Comparisons 1
+The major difference between all methods is how regret is calculated and stored, all use the principle that minimizing counterfactual regret everywhere leads to the convergence of the average strategy to a Nash Equilibrium. 
+Vanilla CFR is stable and slow
+Lazy CFR is a bit faster without much variance
+MCCFR excels when branching factor is large
+Deep CFR sacrifices theoretical soundness to scale to games where tabular storage and abstraction isn’t feasible. 
+26
+Test words
+
+Method Comparisons 2
+27
+Test words
+
+Combinations
+Each modification targets a different bottleneck (update frequency, traversal size, and memory usage), combining methods is an obvious impulse. 
+Lazy Updates and random sampling impact different phases of the algorithm, and could be combined fairly easily.
+Deep CFR could be used with another sampling scheme. Average Strategy Sampling would lower action-branching overhead in larger games.
+Segmentation could reduce how often networks need to be trained, batching regret updates like in Lazy CFR.
+28
+Test words
+
+Conclusion
+In all algorithms, three invariants persist: 
+counterfactual regret serves as an upper bound on external regret
+external regret controls exploitability
+average strategies converge as regret is minimized. 
+
+Much work has been done reducing the computational load of assessing every infoset. The lighter this load is, the larger the set of solvable games becomes. Balancing this with convergence guarantees is still an active field of research.
+29
+Test words
+
+Discussion
+30

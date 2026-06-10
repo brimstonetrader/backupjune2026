@@ -1,0 +1,59 @@
+PLAN FOR THE SUMMER
+
+Goal: Extend algorithms for opponent exploitation and maintaining utility constraints to complex, multiplayer games
+
+
+Next meeting - June 2, Monday 1PM? I think could have been noon
+
+WEEK 1     : 5/12 - Make timeline/plan, literature review
+WEEK 2,3   : 5/19 - Make a small project in OpenSpeil to learn the format, implementing base algorithms (max^n, OPPS, RWYWE) 
+WEEK 4,5,6 : 6/2  - Generalize COX-UCB to perform better against opponent strategies which shift over time. Implement a small transformer opponent.
+WEEK 7,8   : 6/23 - Make OPPS more dynamic, by allowing its parameters to vary based on node value and potential for opponent exploitation.
+WEEK 9,10  : 7/7  - Optimize the OpenSpeil version of RWYWE, allowing use in larger games by approximating game value and guaranteeing safety to some arbitrary high confidence interval
+WEEK 11,12 : 7/21 - Continue work on whichever path seems the most fruitful, further formalizing and implementation. Synthesize some algorithms into something new. If needed, finish things I didn't have time for.
+WEEK 13,14 : 8/4  - Write a review of what I've done, formalizing guarantees and putting it to LaTex.
+
+
+1. CS 351
+2. CS 401
+3. CS 341
+4. CS 151
+5. CS 251
+
+
+
+: https://uic.zoom.us/j/4567087177?pwd=am5GRmtBMm9HeW5iM3p2bEd0WlZrQT09
+
+
+IDEA:
+
+regression CFR is done by training a model to predict regrets instead of tabulating them, allowing generalization across information sets. Could that same technology be used to learn multiple equilibria simultaneously? With a parameter for probability of e.g. betting on a Jack, can the regression model be used to learn the whole family of equilibria at once. 
+
+
+I've mostly learned python in this context. I've written a maxn function and a rwywe, and 
+
+
+I've got open_spiel running and i've learned how it works. Had to install linux and jump through a couple other hoops but we're there, though I still can't get it to run in a jupyter notebook, which is ok.
+
+I've got a max_n method and a rwywe method.
+
+I've been looking into the RCFR file but I don't understand pytorch/what it's doing well enough yet to tinker with it, I read the attached paper but need to learn more. I will go deeper next.
+
+I'm ready to move on to the next stage of my plan. 
+
+TA APPT. MON JUN 16 (COURSE FIRST STARTS)
+
+NEXT MEETING : NEXT MONDAY AT 11, JUNE 9
+
+
+-cox-ucb
+-sent google doc
+-found out how to get move probabilities per-player for rcfr method, i think to find multiple equilibria i'll need to change the policy function 
+-wrote a GTO 
+
+
+next : 
+add results against opponents as opposed to those in the paper to google doc, provide baseline.
+- think of recency bias as weighting n-newest 
+
+MONDAY 11:AM JUN16

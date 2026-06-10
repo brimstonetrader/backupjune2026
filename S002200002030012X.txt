@@ -1,0 +1,11 @@
+Bruno Loff, Nelma Moreira, Rogério Reis,
+The computational power of parsing expression grammars,
+Journal of Computer and System Sciences,
+Volume 111,
+2020,
+Pages 1-21,
+ISSN 0022-0000,
+https://doi.org/10.1016/j.jcss.2020.01.001.
+(https://www.sciencedirect.com/science/article/pii/S002200002030012X)
+Abstract: We study the computational power of parsing expression grammars (PEGs). We begin by constructing PEGs with unexpected behaviour, and surprising new examples of languages with PEGs, including the language of palindromes whose length is a power of two, and a binary-counting language. We then propose a new computational model, the scaffolding automaton, and prove that it exactly characterises the computational power of parsing expression grammars (PEGs). Several consequences will follow from this characterisation: (1) we show that PEGs are computationally “universal”, in a certain sense, which implies the existence of a PEG for a P-complete language; (2) we show that there can be no pumping lemma for PEGs; and (3) we show that PEGs are strictly more powerful than online Turing machines which do o(n/(log⁡n)2) steps of computation per input symbol.
+Keywords: Parsing expression grammar; Context-free grammar; Pumping lemma; Real-time Turing machine; Scaffolding automata

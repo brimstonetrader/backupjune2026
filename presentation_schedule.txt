@@ -1,0 +1,36 @@
+For scheduling, there is very little time per group - at times as low as 3 minutes. Could we devote an extra day to these? Maybe split the class in two and have two groups going simultaneously?
+
+
+
+
+4/29
+9:30  - Group 1
+9:35  - Group 2
+9:40  - Group 3
+9:45  - Group 4
+9:51  - Group 5
+9:57  - Group 6
+10:03 - Group 7
+10:09 - Group 8
+10:14 - Group 9
+10:20 - Group 10
+10:26 - Group 11
+10:31 - Group 12
+10:37 - Group 13
+10:42 - Group 14
+
+5/1
+9:30  - Group 15
+9:35  - Group 16
+9:40  - Group 17
+9:45  - Group 18
+9:51  - Group 19
+9:57  - Group 20
+10:03 - Group 21
+10:09 - Group 22
+10:14 - Group 23
+10:20 - Group 24
+10:26 - Group 25
+10:31 - Group 26
+10:37 - Group 27
+10:42 - Group 28

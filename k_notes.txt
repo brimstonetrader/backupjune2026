@@ -1,0 +1,7 @@
+Dr. Kash
+
+Sorry to bother you, I hope Great Britain is treating you well. Would you like to meet over Zoom sometime over the next week? I wrote a review of some relevant papers in Safe Opponent Exploitation, and would like to advice on what I should do next. I can email it to you before we meet, if you'd like.
+
+Nora Morris
+
+- Approximations play awkwardly with performance guarantees.

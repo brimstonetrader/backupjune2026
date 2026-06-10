@@ -1,0 +1,34 @@
+Hi Nora,
+
+I received a review request for the attached paper, which I think might be a good fit for you.  The journal it is for is not selective, the the focus would be mostly on correctness.  (See details below).  We can discuss more when we meet.
+
+Ian
+
+The criteria for acceptance in Array may be slightly different to other journals that you have had
+experience with in the past. Array accepts papers from all areas of computer science on the condition that they advance the state of knowledge in the subject area (even incrementally) and are scientifically and methodically sound. Preliminary or negative findings, justified reproducibility studies and incremental advancements are welcome, should they fulfill the criteria below. Decisions should not be based on perceived impact or importance.
+We request that you apply the following criteria to guide you through the review process to evaluate manuscripts for Array. There are four questions we would like you to ask before recommending acceptance of a manuscript for publication in Array:
+
+1. Does the article report original results, describe new methods or report novel insight in form of a systematic or scoping review?
+
+    Yes, the article presents three useful improvements to Deep Dueling CFR, which to the best of my knowledge are original in the established literature. The three methods are not totally new, \rewrite{but have not been applied in this context with this result}.
+
+2. Are the methods described in enough detail to understand the approach used?
+    
+    Yes, the three methods are described well, using appropriate charts and pseudocode. The results are well founded by graphs, and terms are defined as they are used. 
+
+3. Are the results mathematically correct and/or is there sufficient data presented to justify the conclusions drawn? Subsequently, is the conclusion a reasonable summary of the results presented?
+
+    Yes, sufficient data is presented to support the given conclusions. The full algorithm attains low exploitability much faster than other state of the art methods. The three changes in isolation (Double Q-Network, Noisy Layer, and SmartMC) are also all shown to positively impact exploitability and other relevant metrics. This all supports the claim that "MQNCFR outperforms state-of-the-art algorithms," though the authors may want to be more careful with that turn of phrase, as there is not a thorough enough literature review to necessitate it.  
+    
+4. Does the paper comply with the conditions stipulated in the Elsevier Policies and Ethics Guide for Authors?
+    
+    Yes, to my knowledge, authorship has been fully credited, nothing is plagiarized or unoriginal, the work is not published elsewhere, all sources are given, and no conflicts of interest are apparent.
+    
+    
+While I think the article is publishable as is, here are some ideas for improvements to the papers that I would encourage the authors to consider.
+    - Clarity on precisely how the new methods help with efficiency, in terms of absolute runtime.
+    - Give more theoretical reasoning that the changes given are helpful, in addition to the results.
+    - Compare the individual components to other MC-CFR variants, like the chart on page 9.
+    - Either use a different phrase than "state of the art" or do more to back up the claim that the given algorithms are state of the art in exploitability and head-to-head performance.
+    
+I think the article is publishable. On review of the submission, all of my suggestions for improvement have been added to the paper, and as a whole it reads well and gives compelling findings.

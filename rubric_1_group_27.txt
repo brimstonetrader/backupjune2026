@@ -1,0 +1,43 @@
+How many times have you met? 3.
+ 
+What have each of you contributed? 
+  
+Who all is present?
+
+What is your plan for distributing work from here?
+
+Commit labels all good
+
+What problem does your project seek to solve?
+
+Show me the plan for your project's layout, features, and functionality.
+ 
+Tell me about potential ethical issues with your project.
+
+  User privacy
+
+Do you have a schedule from now to the deadline?
+
+What is your data source and why is it appropriate? Openfoodfacts
+
+How will data be pulled into the backend?
+
+What sort of data processing is necessary?
+
+What data structures are you using and why? Were there any you considered but ultimately did not use?
+
+GRADE : 18/20
+
+Ethan Irimiciuc
+Jacob Swider
+Sai Chittala
+
+
+
+
+
+
+
+Adrian Quiroz
+Ivan Torres
+Jash Shah

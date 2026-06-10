@@ -1,0 +1,123 @@
+S   M   T   W   T   F   S
+
+X   X   X   3   4   5   6
+
+7   8   9   10  11  12  13
+
+14  15  16  17  18  19  20
+
+21  22  23  24  25  26  27
+
+28  29  30  1   2   3   4
+
+
+UP TO JUNE 19TH
+
+
+WORK
+    further formalize proof for W.A.S. and S.A.S. in latex
+    hefty revisions to paper, change narrative
+    construct family of games for which percieved gifts to rwywe_sto_hi_xform shrink as size gets larger
+    
+        I think goofspiel works. Suppose the opponent only plays smallest to largest. A clear strategy that would respond better is to play the one that's one higher, losing only the last round. However, RWYWE only does this when the sequence of upturned cards has been seen, otherwise it defaults to GTO. This is further a problem as repeating sequences becomes less likely. 
+        
+        https://gcrhoads.byethost4.com/gops.html?i=1
+    
+    write fast rwyw and change tests to work on that 
+    
+
+
+LEISURE
+    draw maps of logan and lakeview
+    do your new puzzle!!
+    draw your outline for cube battle - design document
+    rearrange your apartment
+    start going to the gym, in the interests of developing a swole whr you're willing to wear a bikini with.
+    walk the full river trail (Belmont3200 -> Howard7600 (5.5 miles))    
+    write more on BOX, TOE, or DUMB. Choose one by 6/4 that will be your focus for the summer.
+        we're gonna do DUMB but bring in Damon from BOX as the underground landlord, who already failed at his first venture (nebulous whether his story is true) and actively believes in the underground semi-immortals (Zach insists that he believes this but this might be a lie to Kaylee). We're also gonna have Dr. Way as a minor antagonist, an informant that remained in contact with Zach after he dropped out freshman year. 
+    learn some new recipes!
+        jollof rice
+        grilled style corn
+        al pastor, carne asada, chorizo tacos 
+        chile relleno
+        bagels
+        banh mi 
+        burgers
+        falafel 
+        shawarma
+        muffuletta
+        po boy
+        pickles
+        new york pizza
+        gumbo
+        jambalaya
+        dumplings
+        beignets
+        guacamole / avocado toast
+        pho
+        gyros
+        hawaiian bbq
+        southern bbq
+        baba ganoush
+        tabbouleh
+        bao
+        cornbread catfish 
+        naan
+        reuben
+        ice tea prepped
+        miso/onion soup
+        butter chicken 
+        curry chicken (indian)
+        samosa
+        fried okra
+        caesar salad
+        coleslaw prepped
+        nashville hot chicken 
+        jerk chicken
+        beef/chicken patty
+        curry chicken (jamaican)
+        calzone
+        crab rangoon 
+        chinese style beef 
+        lo mein
+        wings
+        chicago dog        
+        seattle dog
+        polish dog 
+        gyro
+        italian beef 
+        
+        eggplant parm
+        
+
+    
+    DUMB 
+        + elliotsays this one 
+          it's new, no baggage
+          compelling story that warrants length
+          calls my personal experience
+          topical
+        - it's new, less planning
+          main character might be bland
+          ending a bit sketch
+          explicitly transgender
+          weirish (research needed)
+          
+          
+    BOX 
+        + most fleshed out story 
+          most topical 
+          funniest 
+        - predictable
+          crypto is out 
+    
+    TOE 
+        + most fleshed out characters 
+          starkest visual language 
+          spenser and way are great characters 
+        - prone to being derivative
+          no clear allegory
+          
+          
+        

@@ -1,9 +1,66 @@
-- WCP on monday. 
-    what time should i arrive - 12:10 . i'll need to get the key from the office. 
-    how stressed should i be, 45 minutes is more than ive ever done
+// Simple LCG random number generator
+static unsigned int rand_seed = 0;
+
+static unsigned int
+rand_lcg(void)
+{
+  // X_{n+1} = (aX_n + c) mod m
+  // https://en.wikipedia.org/wiki/Linear_congruential_generator
+  r = r * 1664525 + 1013904223;
+  return r;
+}
+
+void
+scheduler(void)
+{
+  struct proc *p;
+  int skipped = 0;
+  
+  // Initialize RNG with system time on first run
+  if(rand_seed == 0) { rand_seed = ticks; }
+  
+  for(;;){
+    // Enable interrupts on this processor.
+    sti();
+    // Loop over process table looking for process to run.
+    acquire(&ptable.lock);
     
-when was my slot to present in group meeting again? - 
-
-rlc deadline is march 5th? should i press ahead or focus on the presentation? slides? sorry i spent so long focused on wcp its been a busy time
-
-: https://uic.zoom.us/j/4567087177?pwd=am5GRmtBMm9HeW5iM3p2bEd0WlZrQT09
+    // Count total tickets
+    int total_tickets = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == RUNNABLE) {
+        total_tickets += p->tickets;
+      }
+    }
+    
+    if(total_tickets == 0) {
+      skipped++;
+      release(&ptable.lock);
+      if(skipped > NPROC) {
+        hlt();
+        skipped = 0;
+      }
+      continue;
+    }
+    
+    unsigned int winner = rand_lcg() % total_tickets;
+    
+    // Find the process holding the winning ticket
+    int counter = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE) { continue; }
+      counter += p->tickets;
+      if(counter > winner) {
+        skipped = 0;
+        proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+        swtch(&cpu->scheduler, p->context);
+        switchkvm();
+        proc = 0;
+        break;
+      }
+    }
+    release(&ptable.lock);
+  }
+}

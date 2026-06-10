@@ -1,0 +1,1 @@
+how is pid 1 created in xv6?     userinit() -> creates page table, uvm, and calls initcode
