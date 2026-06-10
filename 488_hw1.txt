@@ -1,0 +1,43 @@
+Taking the logical OR of all bits cannot function like XOR. Consider
+
+Enc_{OR}(\kappa = 01, msg = 00) = 01
+Enc_{OR}(\kappa = 01, msg = 01) = 01
+Enc_{OR}(\kappa = 01, msg = 10) = 11
+Enc_{OR}(\kappa = 01, msg = 11) = 11
+
+If our decoder function knows that \kappa = 01 and $ct$ = 11, there will be no way for the decryption algorithm to discern whether $msg = 10$ or $msg = 11$. In general, there is no way to decrypt bits where the key was 1. Similarly, a one-time pad with AND looks like this.
+
+Enc_{AND}(\kappa = 01, msg = 00) = 00
+Enc_{AND}(\kappa = 01, msg = 01) = 01
+Enc_{AND}(\kappa = 01, msg = 10) = 00
+Enc_{AND}(\kappa = 01, msg = 11) = 01
+
+There is no way to decrypt bits where \kappa_n = 0, and thus this cannot function as an encryption scheme.
+
+2. If the eavesdropper sends one message with an one 1-bit activated and the other with only zeroes, they will have a 100% chance of victory. Call the number of activated bits in the key $2n + 1, n \in \mathbf{N}$. If the output string has an even amount of bits, then the first was chosen, and there will be either $2n$ or $2n+2$ bits activated depending on whether the chosen bit was active in the key. If there are an odd amount of bits activated, then the second was chosen.
+
+An encryption scheme over a message space M is perfectly secret if for
+every probability distribution over M, every message msg ∈ M, and every
+ciphertext ct ∈ C, Pr[ C = ct | M = msg ] = Pr[ C = ct]. This is equivalent to
+Pr[ M = msg | C = ct] = Pr[ M = msg ], by Bayes theorem.
+
+3. 
+
+ct = 2. What is the probability that msg = 4?
+
+Dec(\kappa = 0, $ct$=2) = 2
+Dec(\kappa = 1, $ct$=2) = 3
+Dec(\kappa = 2, $ct$=2) = 4
+Dec(\kappa = 3, $ct$=2) = 5
+Dec(\kappa = 4, $ct$=2) = 0
+Dec(\kappa = 5, $ct$=2) = 1
+
+There are six possible keys, only one of which gives $msg$=4. Thus P[$msg$ = 4 | $ct$ = 2] = 1/6. P[ $msg$ = 4 ] is the reciprocal of the size of the message space, which is also 1/6. 
+
+5. 
+
+P[C = ct | M = msg] = P[M = msg | C = ct] * P[C = ct] / P[M = msg]
+
+P[M = msg | C = ct] = P[ \kappa = (ct /_{p} msg) ] = 1/p
+
+6. Let p=4. If my message is "2", there is a 2/3 probability that the ciphertext will also be "2", given that 2 *_4 1 = 2 *_4 3 = 2, and there are three possible keys. The remaining case, where \kappa = 2, results in zero, which is not allowed in a finite modular ring.

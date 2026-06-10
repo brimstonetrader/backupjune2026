@@ -1,0 +1,10 @@
+I changed the two things we discussed last time, as well as tinkering with how the accumulated safety value is stored. There's a strange bug. Leduc and Kuhn seem normal and good, but the exploitability for tic tac toe is always greater than 1, despite 1 being the maximal score, even though it's not for all other tested models. probably something being misread in the exploitability calculations, I'm using the standard one here because it's small and that seemed less prone to errors but still it does this. 
+
+I added a little to the paper, specifically in the section on the opponent model, and read some similar papers. Should I include a section where I explain how MCCFR works, given that it's part of the algorithm? 
+
+
+
+
+    print a game between rwywe and best response. 
+    methodology section
+    

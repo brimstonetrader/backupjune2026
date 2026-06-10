@@ -1,0 +1,9 @@
+- Things are pretty alright, my classes are not difficult, TAing is pretty time-consuming but also not too difficult 
+- My top concern is getting the conditional admit hold removed, this is making me quite anxious.
+- It's been a stressful couple of weeks. My car got stolen, had to deal with insurance. I'm getting my payout, though, and the midterm went weirdly well.
+- I sent one in June, and one in October. Should the June one have been applied? I just assumed I'd sent it too early.
+- So CFR trains against itself, and assumes the opponent to play with a similarly optimal strategy. Are there any modifications to the algorithm which can adapt to and exploit opponents with non-optimal strategies?
+
+905
+
+Not AI2: 407 (Econ and Comp) <- relevant

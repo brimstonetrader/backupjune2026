@@ -1,0 +1,77 @@
+RCFR:
+
+    write paper
+    test current exploitability figures and convergence rate with variable alpha
+    compare current exploitability to the rcfr paper, in all variants
+    get self-play fully working, with and without best-response prodding
+    some theoretical analysis of what should be expected
+    
+RWYWE: 
+    find good way to test exploitability that's tractable in big games.   https://arxiv.org/pdf/2004.09677v1
+    revise paper 
+        expand introduction
+        give a bit more background
+        some theoretical analysis of the resultant safety guarantee from the alterations
+start-> more related work
+    leduc poker added to table
+    
+    
+    
+    >what new stuff should i add to intro and background?
+        > what youve done why its important
+        > rwywe paper spends two pages laying out context, take cues there. 
+        > pseudo for og algorithm 
+        > much deeper in 3.1
+    >so im just gonna keep nlp. do i need to sign up for a session of "thesis research hours"?
+        > 
+    >got my TA assignment. whys it different now? im in 151 again instructor seems nice
+    > The regret for os-mc-cfr is given in the paper, and from this the baseline exploitability can be calculated, and the exploitability of an update via rwywe can be given by a formula in that paper. 
+        > consult the rcfr paper. they have a bound on regret for nn approximations. 
+    > working on exploitability approximate, i found a rl approximate best response that i will use 
+
+
+jan28 deadline - 4 weeks 2 days
+              
+1: create overleaf for paper in ICML format. share with dr kash and make him the owner (bc $ has premium overleaf)
+ - in first table compare to best response
+ - does scalability introduce vulnarability to getting exploited
+ - maybe test against a dynamic opponent than goes from bad to good.
+    - exploitable algorithms other than uniform random - like worst response? or just the dynamic.
+    
+    
+    
+mccfr regret bound: R_i^T \leq \( 1 + \frac{\sqrt{2}}{\sqrt{p}}  \) \( \)
+
+
+: https://uic.zoom.us/j/4567087177?pwd=am5GRmtBMm9HeW5iM3p2bEd0WlZrQT09
+
+
+- zero hours??
+- classes mostly set up, ta assignment fine
+- shared you new document with correct formatting, will make you owner again. tables and sources shifted.
+- try normal exploitability till this breaks. maybe ask michael sullins. variability (plus/minus confidence interval). 
+- revise 2.1, show that it's prohibitively expensive
+
+examine deep cfr paper . 
+
+
+
+TO SULLINS
+
+Hey, I was curious how you've handled exploitability computations in open spiel in large games. For best response, do you generally find an approximation? That's how I've been handling it, in a simple Monte-Carlo way, but Dr. Kash said you might have also worked on this problem.
+3
+ 
+ 
+instead of icml, reinforcement learning conference has a deadline in early march . 
+
+
+maybe a workshop in may
+NRPS - a little too prestigious for me . 
+
+
+start to address - in section 3 and throughout it's too high level. basically just an introduction. go into way more detail. even pseudocode is really high level. be much more specific about what the algorithm is doing. 
+
+ex. how is the infostate represented
+    training process
+    technical in early sections, very specific abt original version. 
+    lots of math and engineering detail.

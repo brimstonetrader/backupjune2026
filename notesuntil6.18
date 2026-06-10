@@ -1,0 +1,6 @@
+// RWYWE is technically not feasible in large, extended form games with imperfect information. The computations needed, through the linear programs and position evaluation, are not possible far beyond Kuhn Poker. It is also theoretically not feasible, ignoring these issues. Consider an $n$-card Goofspiel. This is a game where each player is dealt a card from 1 to $n$. There is also a central deck of cards from 1 to $n$ called the prizes. Each turn, a random prize card is revealed, then each player bids one of theirs, with the winner recieving an amount of points equal to the number on the prize card. In the case of a tie, the point value is split. At the end, the winner is the player with the most points. 
+
+RWYWE assumes that the opponent will play a best response at every state beyond the current one. This leads to effectively ignoring M as the model plays, keeping k low even as all infosets are visited. As game space gets larger, the pessimistic assumption takes up a greater proportion of the opponent's view of the game. 
+
+^-- come up with something simple enough you can put numbers to it.
+

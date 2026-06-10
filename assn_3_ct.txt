@@ -1,0 +1,25 @@
+1.
+Let $p,n \in \mathbf{Z}$ such that p divides n. If $p=n$, then $(x \% n) \% p = x \% p$ trivially. $p$ cannot be zero because modulus is undefined then. Assume p<n. Because $p\|n$, let $n = cp$, for some integer $c$. 
+
+$x = an + b = acp + b$
+
+(x % n) % p = b % p = (acp + b) % p = x % p
+
+2. Order is 8. Group elements are [1,3,7,9,11,13,17,19].
+
+3. 2 is a generator of the group. 
+
+[(2^x) % 13 | x <- [0..12]] = [1,2,4,8,3,6,12,11,9,5,10,7,1]
+
+4. dlog_{2}(8) = 3
+
+5. G = Z^{*}_{23}, g=2.
+[(2^y) % 23 | y <- [0..21]] = [1,2,4,8,16,9,18,13,3,6,12,1,2,4,8,16,9,18,13,3,6,12]
+
+Alice sends h_1 = 2^5 % 23 = 9, then Bob sends h_2 = 2^7 % 23 = 13. The secret key is 9^7 % 23 = 13^5 % 23 = 2^35 % 23 = 4.
+
+6. 
+- Alice sends public key (G=Z_47, q=46, g=5, $h_1 = 5^4 % 47 = 14$). 
+- Bob sends ($h_2 = 5^32 % 47 = 7$), and calculates secret key (h_1)^y=14^32 % 47 = 4. He sends c=km=4*9 % 47 = 36.
+- Alice calculates her secret key, k=7^4 % 47 = 4, and its inverse, $k^{-1} = 12$. She then gets the message $m = ck^{-1} = 36*12 % 47 = 9.
+

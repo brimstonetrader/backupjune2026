@@ -1,0 +1,21 @@
+prediction markets
+- market scoring rule - choose scoring rule S, initial report, q_0, take each agent i's report q_i, then pay i for outcome x 
+ - S(q_i, x) - S(q_{i-1}, x)
+scoring rules
+- strictly proper scoring rule -  𝑆(𝑝,𝑝) > 𝑆(𝑞,𝑝) ∀𝑞≠𝑝
+ - brier score - S(q,x) = 2q_x - sum(q^2)
+            True False
+    Expert1	0.7	 0.3
+    Expert2	0.4	 0.6
+    BS = (0.82, 0.28)
+ - log score - S(q,x) = ln(q_x)
+voting 
+- majority rule 
+- condorcet criterion -  Select alternatives that beat all other alternatives
+- copeland rule - pick winner according to the graph of head-to-head
+- single transferable vote - eliminate worst and reevaluate until one is left
+- borda rule - score n-1 to 0 based on blace, choose max score
+- only strategyproof options are dictatorship and two-candidate majority.
+in a pairwise majority comparison
+matching
+ - deferred acceptance, serial dictatorship, top trading cycles

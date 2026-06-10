@@ -1,0 +1,153 @@
+"""
+run_rwywe.py
+------------
+1000 hands of Kuhn poker: RWYWEAgent (P0) vs near-equilibrium opponent (P1).
+
+Opponent model (paper §9.2, "sophisticated static" class):
+  At each of P1's 6 infosets, the bet probability is drawn uniformly from
+  [max(0, p_eq − 0.2), min(1, p_eq + 0.2)].  This strategy is sampled once
+  at the start of the match and held fixed for all 1000 hands.
+
+Run from the directory containing rwywe.py and gto_kuhn_poker.py:
+    python run_rwywe.py
+"""
+
+import sys, random
+sys.path.insert(0, ".")
+
+import pyspiel
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+
+from open_spiel.python.examples.rwywe import RWYWEAgent
+
+# ── Near-equilibrium opponent ─────────────────────────────────────────────────
+# P1 equilibrium bet probabilities at each infoset (alpha = 0.2):
+#   "0b" → fold (p_bet=0.0),  "0p" → bet w.p. 1/3
+#   "1b" → call w.p. 1/3,     "1p" → check (p_bet=0.0)
+#   "2b" → call (p_bet=1.0),  "2p" → bet (p_bet=1.0)
+P1_EQUIL_BET = {"0b": 0.0, "0p": 1/3, "1b": 1/3, "1p": 0.0, "2b": 1.0, "2p": 1.0}
+EPSILON = 0.2   # perturbation window (paper §9.2)
+
+def sample_near_equil_strategy():
+    """
+    Draw one fixed mixed strategy for P1 by perturbing each equilibrium
+    bet probability uniformly within ±EPSILON, clamped to [0, 1].
+    Returns a dict {infoset_string: p_bet}.
+    """
+    strategy = {}
+    for iss, p_eq in P1_EQUIL_BET.items():
+        lo = max(0.0, p_eq - EPSILON)
+        hi = min(1.0, p_eq + EPSILON)
+        strategy[iss] = random.uniform(lo, hi)
+    return strategy
+
+def opp_action(state, strategy):
+    """Sample P1's action from its fixed strategy at the current infoset."""
+    iss = state.information_state_string(state.current_player())
+    p_bet = strategy[iss]
+    return 1 if random.random() < p_bet else 0
+
+# ── Simulation ────────────────────────────────────────────────────────────────
+
+def play_hand(game, agent, opp_strategy):
+    """Play one complete hand; return the agent's realized payoff."""
+    state = game.new_initial_state()
+    while not state.is_terminal():
+        if state.is_chance_node():
+            outcomes = state.chance_outcomes()
+            actions, probs = zip(*outcomes)
+            state.apply_action(random.choices(actions, probs)[0])
+        elif state.current_player() == agent.player_id:
+            state.apply_action(agent.step(state))
+        else:
+            a = opp_action(state, opp_strategy)
+            agent.inform_action(state, state.current_player(), a)
+            state.apply_action(a)
+    agent.on_terminal(state)
+    return state.returns()[agent.player_id]
+
+
+def run(num_hands=1000, seed=42):
+    random.seed(seed)
+    game          = pyspiel.load_game("kuhn_poker")
+    agent         = RWYWEAgent(game, player_id=0)
+    opp_strategy  = sample_near_equil_strategy()   # fixed for the whole match
+
+    print("Opponent strategy (p_bet per infoset):")
+    for iss, p in sorted(opp_strategy.items()):
+        print(f"  {iss:4s}  equil={P1_EQUIL_BET[iss]:.3f}  sampled={p:.3f}")
+    print()
+
+    cumulative, profits, ks = 0.0, [], []
+    for h in range(num_hands):
+        cumulative += play_hand(game, agent, opp_strategy)
+        profits.append(cumulative)
+        ks.append(agent.k)
+        if (h + 1) % 100 == 0:
+            print(f"hand {h+1:4d} | profit {cumulative:+8.3f} | k {agent.k:.3f}")
+    return profits, ks
+
+# ── Plot ──────────────────────────────────────────────────────────────────────
+
+def plot(profits, ks, path="rwywe_results.png"):
+    v_star = -1.0 / 18.0
+    hands  = range(1, len(profits) + 1)
+
+    BG, PANEL = "#0d1117", "#161b22"
+    BLUE, GREEN, RED, GRID, TEXT = "#58a6ff", "#3fb950", "#f78166", "#21262d", "#e6edf3"
+
+    fig, ax1 = plt.subplots(figsize=(13, 6), facecolor=BG)
+    ax2 = ax1.twinx()
+    ax1.set_facecolor(PANEL); ax2.set_facecolor(PANEL)
+
+    ax1.fill_between(hands, profits, 0, alpha=0.10, color=BLUE, linewidth=0)
+    ax1.plot(hands, profits, color=BLUE, lw=1.8, label="Cumulative profit")
+    ax1.plot(hands, [v_star * h for h in hands],
+             color=RED, lw=1.0, ls="--", alpha=0.7,
+             label=f"GTO baseline  (v*={v_star:.4f}/hand)")
+    ax1.axhline(0, color=TEXT, lw=0.4, alpha=0.3)
+    ax1.set_xlabel("Hand", color=TEXT, fontsize=11)
+    ax1.set_ylabel("Cumulative profit ($)", color=BLUE, fontsize=11)
+    ax1.tick_params(axis="y", colors=BLUE)
+    ax1.tick_params(axis="x", colors=TEXT)
+    ax1.yaxis.set_major_formatter(ticker.FormatStrFormatter("%+.0f"))
+
+    ax2.fill_between(hands, ks, alpha=0.07, color=GREEN, linewidth=0)
+    ax2.plot(hands, ks, color=GREEN, lw=1.4, alpha=0.9, label=r"Safety budget $k_t$")
+    ax2.set_ylabel(r"Safety budget $k_t$", color=GREEN, fontsize=11)
+    ax2.tick_params(axis="y", colors=GREEN)
+    ax2.set_ylim(bottom=0)
+
+    ax1.set_xlim(1, len(profits))
+    ax1.grid(True, color=GRID, lw=0.6, zorder=0)
+    for ax in (ax1, ax2):
+        for sp in ax.spines.values():
+            sp.set_edgecolor(GRID)
+
+    h1, l1 = ax1.get_legend_handles_labels()
+    h2, l2 = ax2.get_legend_handles_labels()
+    ax1.legend(h1 + h2, l1 + l2, loc="upper left",
+               framealpha=0.25, facecolor=PANEL, edgecolor=GRID,
+               labelcolor=TEXT, fontsize=10)
+
+    fig.suptitle(
+        "RWYWE vs Near-Equilibrium Opponent — Kuhn Poker (1 000 hands)\n"
+        r"Risk What You've Won in Expectation  ·  $\alpha=0.2$  ·  $\varepsilon=0.2$  ·  "
+        "Ganzfried & Sandholm (2015)",
+        color=TEXT, fontsize=12, y=1.01
+    )
+    plt.tight_layout()
+    plt.savefig(path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {path}")
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+if __name__ == "__main__":
+    profits, ks = run(num_hands=1000, seed=42)
+    print(f"\nfinal profit : {profits[-1]:+.3f}")
+    print(f"GTO baseline : {1000 * (-1/18):+.3f}")
+    print(f"final k      : {ks[-1]:.3f}")
+    plot(profits, ks, path="/mnt/user-data/outputs/rwywe_results.png")

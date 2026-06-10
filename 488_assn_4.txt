@@ -1,0 +1,43 @@
+1. 
+
+Suppose we know the order to be $n$ of the group $#mathbf{Z}^{*}_N$, where $N=pq$ for large prime numbers $p$ and $q$. $n$ = $(p-1)(q-1)$, by Euler's product formula. This means that $N - n = p + q - 1$, and thus $p = N - n - q + 1$. We can substitute this into the initial equation, finding $n = ((N - n - q + 1) - 1)(q - 1) = Nq - nq - q^2 - N + n + q$. Thus, $Nq - nq - q^2 - N + q = 0$. This is a quadratic equation of a single variable, which we can solve for $q$. We can then find $p=N/q$.
+
+2. 
+
+If the keys are the same for encryption and signing, the signature of a ciphertext will be the same as its decryption. Thus, by querying the oracle, the adversary can recover the plaintext of the message, breaking the encryption scheme.
+
+3.
+
+a. 
+
+$sk=19, m=14, \mathbf{sign}_{sk}(m) = (15, 7)$
+
+// $Sign_{sk}(m):$
+// Let $k = 4, I = g^k = 3^4 \% 23 = 12$
+// $r = H(I,m) = 1214 \% 23 = 18$
+// $s = (18*19 + 4) % 23 = 1$
+// Output $(r=18, s=1, m=14)$.
+
+$Verify_{pk}(r=15, s=7, m=14):$
+$I = g^s y^{-r} = ((3^19)*(3^14)^{-15}) % 23 = (6*6^{-15}) % 23 = (6*4*6^{15}) = 8$
+$H(8,14) = 414 \% 23 = 9$.
+
+This one does not work. $9 \neq 15$.
+
+b. 
+
+$sk=5, m=5, \mathbf{sign}_{sk}(m) = (4, 2)$
+
+$Verify_{pk}(r=4, s=2, m=5):$
+$I = g^s y^{-r} = ((3^2)*(3^5)^{-4}) % 23 = (9 * 16 * (3^20)) % 23 = 16$
+$H(I,m) = H(16,14) = 1614 \% 23 = 4$.
+
+This one does work.
+
+4.
+
+If the attacker chooses $r=0$, then all messages will be mapped to the same hash, as, for any group $G$, $a^0 = e \forall a \in G$. This includes untrue statements, which violates soundness.
+
+5. 
+
+Let $N = pq$ for distinct prime $p, q$. Let $1 \leq y < N$, and $y_p = y \% p, y_q = y \% q$. By Proposition 13.21, $y$ is a quadratic residue modulo $N$ iff $y_p$ is a quadratic residue modulo $p$ and $y_q$ is a quadratic residue modulo $q$. Every possible pair of elements $(a_p \in \mathbf{Z}_p, a_q \in \mathbf{Z}_q) is associated with one and only one a \in \mathbf{Z}_N$. There are $(p-1)/2$ possible quadratic residues mod $p$, and $(q-1)/2$ possible quadratic residues mod $q$. All possible pairs (m_p, n_q) of quadratic residues form one unique quadratic residue mod N due to the Chinese Remainder Theorem. Thus, there are $(\frac{p-1}{2})(\frac{q-1}{2})$ elements in the group of quadratic residues mod N.

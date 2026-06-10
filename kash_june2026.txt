@@ -1,0 +1,68 @@
+Ive run two tests of RWYW in kuhn poker. One against a best response, one against an opponent that flatlined to uniform random when k is positive and otherwise maintained BR. Both hovered close to GTO.     
+
+I'm defining safety-in-expectation as when an algorithm is expected to achieve the value of the game on a sufficiently long timescale. strategy pi_i is safe if for every opponent strategy pi_{-i} and sufficiently large Q
+    
+    lim_{Q->\inf} (sum_{T=0}^{Q} v_i - u_i(pi_i, pi_{-i})) / Q -> 0
+    
+My empirical data seems to point to RWYW being safe in expectation, and logically it could only be down by one round 
+
+    
+RWYW has nonpositive k and is thusly playing GTO w exploitability zero. From here it's safe in expectation, and how low k can go can be bounded by the minimum payoff of the game.
+
+RWYW is "up", has positive value, and can potentially be exploited, but is currently safe.
+        
+    
+    RWYW is safe in expectation. 
+    
+I have two charts of exploitability on avg and payoff on average against br opponent and varying one. It does seem to shrink slowly to GTO which is expected. 
+
+We could argue that, or that the deviation is bounded to that of a single game which will vanish in summation, or that over time RWYW updates the same as RWYWE, just taking a bumpier road.
+
+working on a leduc poker test but that's taking longer. It will use cfr to have an approximate equilibrium. I've also been going back to the rwywe method trying to isolate how it's doing so much worse at responding to the baiting opponent. those are both not done but in good spots. 
+    - I think the tau update is wrong with the rwywe bc when i replace that it returns to safety on opp3. So just rewiring that, still.
+    - I needed to add a lot of stuff to make the opponent pure strategies in leduc poker enumerable. The linear program part solved over all pure strategies, so I needed to change that to (iss,action). Still WIP. Not sure how necessary this is. 
+
+i added a bit on rwyw to the paper but didn't want to do too much until i asked what proof method seemed best. I'm sure this new stuff will lead to heavy revisions. 
+
+
+I can just meet Tuesday, I apologize for not responding sooner.
+
+
+COUPLING ARGUMENT:
+make two random walks move together . try to use this. 
+
+say opp plays nash for t-sqrt(t) rounds, then for sqrt(t) is best response. There is a constant probability you're above sqrt(t) in k-space by then
+
+
+
+To prove that RWYW is weakly asymptotically safe, we must show that \[\lim_{T \rightarrow \infty} \frac{1}{T} \left(\sum_{t=0}^{T} v_i - u_i(a_i^t, a_{-i}^t)\right)  \geq 0\]. 
+
+Suppose RWYW is playing a game against an optimal opponent. WLOG, assume the winning payoff is 1, and the expected game value is 0. It will be in one of two states. The cumulative payoff cannot be positive asymptotically if the opponent is optimal, it must be at most zero. It is possible for a nemesis algorithm to needsdefine{bait} RWYW into \needsdefine{squander}ing its winnings when it has a positive cumulative payoff, but such a strategy will not work when RWYW has cumulative nonpositive payoff. At that point, both players will be playing GTO, and the asymptotic behavior can be modeled as a one-dimensional random walk.
+
+It has been shown that a 1d random walk of $n$ steps has expected distance from the origin of $O(\sqrt{n})$ (constant factor of sqrt(2/pi)). The walk here is different in that zero has transition probabilities of equally staying in place or moving to -1. This does not make a difference in the expected distance, as the absolute value is unchanged between a standard walk and this half-line walk. Thus, asymptotically, RWYW against a worst case opponent will achieve payoff of O(1/sqrt(n)) per round, which asymptotically vanishes. Thus, RWYW is weakly asymptotically safe.
+
+Strong Asymptotic Safety is a more difficult condition to verify. Again we must prove that the expected value per-round vanishes to zero over time. 
+
+I believe a counterexample to it being S.A.S. is as follows. Suppose a nemesis strategy plays 100 rounds by GTO, making those rounds a random walk for both players. The odds are 16% that the payoff to RWYW will be \geq 10, due to the standard deviation being ~10 and the odds being 1/2 that it will wind up on the positive side. In those 16%, suppose our nemesis is maximally exploitative, extracting -10*c in expectation. This is a constant number, asymptotically. 
+
+-> The issue. The other 84% is on average -2.9. The assumption that 1/4 will be +10 only holds when the walk begins at zero - this is gradually not true as the exploitation strategy continues.
+
+
+A counterexample would need to show a constant negative EV over time. To do this, a strategy would need to reliably follow a cycle where it's able to find a natural positive fluctuation of the random walk and exploit that. I don't believe that this is possible, because the law of the iterated logarithm states that the expected maximal extreme of a random walk is sqrt(2n log(log(n)))
+
+martingale - EV of next observation given all prior observations equals most recent value. When negative RWYW is a martingale. 
+
+
+NEXT WEEK:
+
+TUESDAY IS NORMAL THEN NEXT MEETING IS FRIDAY THE 19th.
+
+The formal proof would likely proceed via optional stopping theorem arguments on the martingale k_t - E[k_t], combined with the LIL to bound the supremum of k over intervals, and then showing the total exploitation damage is o(T) almost surely. This is doable but requires careful measure theory — it's not obvious, and I'd want to verify the stopping time arguments hold for adapted (not just fixed) nemesis strategies before claiming it definitively.
+
+
+optional stopping theorem - the random walk will return to zero at some point with probability 1.
+
+
+if we can argue that the maximal exploitative potential is the furthest expected deviation (via LIL) that is a complete proof. 
+
+Can we prove via constructing an example of the family of games wherein as they get larger gifts are smaller? According to RWYWE, bc the tau is so pessimistic on unreached infosets.

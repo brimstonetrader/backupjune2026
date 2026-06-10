@@ -1,0 +1,3 @@
+bc it's deterministic, don't try to sample and infer the distribution. just return mccfr or the pure strategy. 
+
+cfr solver should run against opponent model. best response is currently just an equilibrium which is wrong. might be a built in. 

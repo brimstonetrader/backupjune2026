@@ -1,0 +1,53 @@
+I switched back to calculating every hand. When it's only calculated at 101 the results look like
+
+
+
+Run 1/10  (seed 39628)
+
+  Opponent 1: Uniform random                    pay=+0.1450  k_max=223.795  viol=6
+
+  Opponent 2: Static near-GTO (±0.2)            pay=+0.0350  k_max=78.617  viol=3
+
+  Opponent 3: Uniform (1-100) → best resp       pay=+0.6840  k_max=761.368  viol=0
+
+  Opponent 4: Full GTO                          pay=+0.0200  k_max=-0.000  viol=0
+
+Run 2/10  (seed 39629)
+
+  Opponent 1: Uniform random                    pay=+0.1720  k_max=235.081  viol=0
+
+  Opponent 2: Static near-GTO (±0.2)            pay=-0.0740  k_max=28.781  viol=17
+
+  Opponent 3: Uniform (1-100) → best resp       pay=+0.6600  k_max=718.300  viol=4
+
+  Opponent 4: Full GTO                          pay=-0.0410  k_max=10.259  viol=6
+
+Run 3/10  (seed 39630)
+
+  Opponent 1: Uniform random                    pay=+0.2700  k_max=326.834  viol=0
+
+  Opponent 2: Static near-GTO (±0.2)            pay=+0.1790  k_max=160.832  viol=4
+
+  Opponent 3: Uniform (1-100) → best resp       pay=+0.1170  k_max=146.517  viol=0
+
+  Opponent 4: Full GTO                          pay=-0.1000  k_max=16.633  viol=29
+
+Run 4/10  (seed 39631)
+
+  Opponent 1: Uniform random                    pay=+0.3850  k_max=382.935  viol=2
+
+  Opponent 2: Static near-GTO (±0.2)            pay=-0.0640  k_max=38.208  viol=1
+
+  Opponent 3: Uniform (1-100) → best resp       pay=+0.1300  k_max=156.129  viol=8
+
+  Opponent 4: Full GTO                          pay=-0.0530  k_max=5.014  viol=25
+
+Run 5/10  (seed 39632)
+
+  Opponent 1: Uniform random                    pay=+0.6220  k_max=624.464  viol=0
+
+  Opponent 2: Static near-GTO (±0.2)            pay=+0.0130  k_max=87.081  viol=1
+
+  Opponent 3: Uniform (1-100) → best resp       pay=+0.1110  k_max=149.627  viol=0
+
+  Opponent 4: Full GTO                          pay=-0.0680  k_max=0.234  viol=41

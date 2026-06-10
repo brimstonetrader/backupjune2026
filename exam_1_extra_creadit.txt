@@ -1,0 +1,25 @@
+1b. The entry point in assembly, which then calls the trap handler.
+
+'call trap' 
+
+1c. 
+
+1e. 
+
+1f. 
+
+2a. 
+
+The first sector of the boot disk is kept at address 0x7C00.
+
+3b. 
+
+3c. 
+
+4a.
+
+4b.
+
+4c.
+
+4d.

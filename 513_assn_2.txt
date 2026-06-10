@@ -1,0 +1,38 @@
+Class,
+
+
+Your second project will be to build a Bayesian network using Netica, a product of Norsys Corp.
+Your project is due Friday October, 11, at 10am sharp, with 48hrs late submission (75%).
+
+
+Submit: A domain description, your variables, their interrelations, and reasoning task you are automating (describe three test cases), and the content of your knowledge base (.neta file).
+
+
+Have fun!
+
+
+My domain is predicting the likelihood of an American's vote based on demographic information. A lot of money and effort goes into predicting the outcomes of presidential elections every year. Many interrelated factors come together to inform one's vote, and the Bayesian Network represents it well. My network takes 10 variables into account to predict one of four possible outcomes (Harris/Walz, Trump/Vance, Third Party, or Will Not Vote). The space of eligible voters can be narrowed tremendously through this, allowing for analysis of potential vote totals along many axes. This style of decision algorithm could find use in campaign strategy, reporting, and analysis. 
+
+> Independent Variables
+  > Location - Whether the voter lives in an urban, suburban or rural environment.
+  > Generation - Voter age, one of Boomer (over 55), GenX (35-55), and Millenial/Zoomer (<35).
+  > Gender - Male, Female, or Nonbinary
+  > Immigration Status - First Generation, Second Generation, or Not A Recent Immigrant.
+  
+> Dependent Variables 
+  > Education Level (depends on Gender) - High School, Some College, Finished College, Other Professional Training, or Graduate School.
+  > Race (depends on Immigration Status) - White, Black, Asian, or Hispanic.
+  > Household Income (depends on Education Level) - Lower, Middle, or Upper Class.
+  > US Region (depends on Location) - North, South, or West.
+  
+> Terminal Nodes
+  > Political Leanings (depends on Household Income, Generation, and US Region) - Liberal, Conservative, or Unaffiliated
+  > 2024 Vote (depends on Political Leanings, Race, and Gender) - Harris/Walz, Trump/Vance, Third Party, or Will Not Vote.
+  
+Three Test Cases: 
+
+A Conservative White Man has a 75% chance of voting Trump, and an 8% chance of voting Harris.
+
+A Nonbinary person has a 51% chance of voting for Harris.
+
+A Southern Boomer has a 55% chance of voting Trump, and a 25% chance of voting Harris.

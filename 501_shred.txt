@@ -1,0 +1,144 @@
+documentclass{article}
+usepackage{graphicx} % Required for inserting images
+
+title{501 Final}
+author{Nora Morris}
+date{May 9, 2025}
+
+begin{document}
+parindent=0mm
+
+maketitle
+
+section{Q1}
+
+Let $OPT$ be the cost of an optimal tour for an n-vertex metric TSP, and let $OPT'$ be the cost of a second best tour. Show that $OPT' leq (1 + frac{2}{n})·OPT$.
+
+
+
+Hint: consider the tour obtained from an optimal tour by switching the order of visiting the endpoints
+of a cheapest edge.
+
+subsection{Answer}
+
+A cheapest edge in the optimal tour will have cost of at most $frac{OPT}{n}$. Call this edge $(u,v)$, and the path followed through this edge $t rightarrow u rightarrow v rightarrow w$. Consider the tour that results from replacing this path with $t rightarrow v rightarrow u rightarrow w$. This tour will be more expensive than the optimum by 
+
+
+
+$c(t,v) + c(u,w) - c(t,u) - c(v,w) leq $
+
+$c(t,u) + c(u,v) + c(u,v) + c(v,w) - c(t,u) - c(v,w) = $
+
+$2*c(u,v) leq 2cdot frac{OPT}{n}$. 
+
+
+
+Because there exists an alternate tour that has cost $OPT + 2cdot frac{OPT}{n}$, $OPT' leq (1 + frac{2}{n})·OPT$
+
+section{Q2}
+
+Consider the following local search algorithm for the unweighted MAX-SAT problem.
+
+
+
+Start from an arbitrary truth assignment, and repeat the following: if there is a variable $x_i$ such that flipping it increases the number of satisfied clauses then pick any such variable and flip it.
+
+begin{itemize}
+    item[a] Show that this is a polynomial time algorithm, and it is a (1/2)-approximation algorithm.
+    item[b] Generalize a) as follows: if every clause contains at least k literals then the algorithm is a k/(k + 1)-approximation algorithm.
+end{itemize} 
+
+Hint: assume w.l.o.g. that the local optimum is the all ones vector. For every variable $x_i$, let $t_i$ be the number of satisfied clauses which are satisfied by $x_i$ only, and $f_i$ be the number of falsified clauses containing $overline{x_i}$.
+
+subsection{Answer}
+
+subsubsection{Polynomial Time}
+
+Any flip of a variable will only happen if it increases the total number of satisfied clauses. There are a finite number $m$ of clauses in the expression, so there can be at most $m$ variable flips. In each iteration, every expression must be evaluated, and each can have length equal to the maximum of the number of unique variables, $n$. Thus, the total algorithm is $O(nm^2)$, which is polynomial to the input size.
+
+subsubsection{(1/2)-Approximation Ratio}
+
+For every variable $x_i$, call $t_i$ the number of satisfied clauses which are satisfied by $x_i$ only, and $f_i$ the number of falsified clauses containing $overline{x_i}$.
+
+
+At a local optimum, for every variable $x_i$, $t_i geq f_i$. Thus, [sum_{i=0}^n t_i geq sum_{i=0}^n f_i].
+
+Call $T$ the set of clauses satisfied by the assignment and $F$ the set that aren't. $|T| + |F| = m$. All clauses satisfied by only one literal are included in $sum t_i$, but those with multiple are not, so$sum t_i leq |T|$. Every unsatisfied clause has at least one variable in it, so across all variables, $|F| leq sum f_i$. At the local optimum, 
+
+
+
+$sum t_i geq sum f_i rightarrow |F| leq f_i leq t_i leq |T| rightarrow |F| leq |T|$. $OPT leq m = |F| + |T| leq 2|T|$. 
+
+
+
+Thus, $frac{OPT}{2} leq |T|$, and this is a $1/2$-APX algorithm.
+
+
+
+subsubsection{Generalization}
+
+Suppose that each clause contains a minimum of $k$ literals. $forall x_i in F, sum f_i$ gets larger by at least $k$. Thus, $k|F| leq sum f_i$. At the local optimum, $sum f_i leq sum t_i leq |T|$. Thus, $|F| leq |T|/k$. Thus, $OPT leq m = |T| + |F| leq |T| + |T|/k = frac{k+1}{k}|T|$. $OPT leq  frac{k+1}{k}|T| rightarrow frac{k}{k+1}OPT leq |T|$. Thus, for expressions with clauses with a minimum of $k$ literals each, this is a $frac{k}{k+1}$-APX algorithm.
+
+
+section{Q5}
+
+There are $m$ possible locations for facilities, serving $n$ customers. Location $i$ has value $v_{ij} geq 0$ for customer $j$. The value of a set $S subseteq {1, . . . , m}$ of locations is
+
+[f(S) = sum_{j=1}^{n} max_{i in S} v_{ij} ]
+
+Let $f(emptyset) = 0$.
+begin{itemize}
+    item[a] Is $f$ monotone?
+    item[b] Is $f$ submodular?
+end{itemize}
+
+Hint: consider the property of diminishing returns.
+
+
+subsection{Monotone}
+
+For every location $l$ and set of locations not containing $l$, $S_{-l}$, 
+
+[f(S_{-l}) = f(l cup S_{-l}) + (sum_{j=1}^{n} max(v_{lj}, max_{i in S} v_{ij}) - max_{i in S} v_{ij})].  
+
+The left hand side is never less than zero, so this function is monotonically increasing for all possible sets, as $forall j, S|jnotin S : f(S) leq f(s cup {j})$.
+
+subsection{Submodular}
+
+Let $S,T$ be two sets of locations such that $S,T hspace{1mm} | hspace{1mm} S subseteq T$ and location $x not in T$, 
+
+In this function, adding $x$ to $S$ will increase the value by 
+
+
+
+$sum_{j=0}^n max(0, v_{xj} - max_{i in S}v_{ij})$.
+
+
+
+and adding $x$ to $T$ increases the value by
+
+
+
+$sum_{j=0}^n max(0, v_{xj} - max(max_{i in S}v_{ij}, max_{i in T - S}v_{ij})$. Note that
+
+
+
+$sum_{j=0}^n max(0, v_{xj} - max(0, max_{i in S}v_{ij}, max_{i in T - S}v_{ij}) leq sum_{j=0}^n max(0, v_{xj} - max_{i in S}v_{ij})$, since $max(0, max_{i in S}v_{ij}, max_{i in T - S}v_{ij}) geq max(0, v_{xj} - max_{i in S}v_{ij})$
+
+
+
+Thus, $f(S cup {x}) - f(S) geq f(T cup {x}) - f(T) forall x,S,T hspace{1mm} | hspace{1mm} Ssubseteq T, x not in T $, and the function is submodular.
+
+
+% section{Q6}
+
+% Give of brief overview of randomized algorithms we learned about in this class, mentioning some of the main results and design and analysis techniques.
+
+% begin{itemize}
+%     item We didn't go into much detail, but we learned that randomization gave a microscopic speedup to the Metric TSP from $frac{3}{2}$ to $frac{3}{2} - 10^{-36}$.
+%     item For set cover, we learned about the randomized rounding algorithm. This method finds an LP relaxed optimal solution with booleans generalized to values between 0 and 1. Then, it sets each value to true with probability equal to its LP value. This method does not guarantee a full set cover, but if it is repeated $lceil ln 4n rceil$ times, the odds are at least $frac{1}{2}$ that a set cover is found with cost at most $4 lceil ln 4n rceil cdot Z_{LP}^*$, where $Z_{LP}^*$ is the cost of the LP relaxation. If this process is repeated a thousand times, there is a $frac{1}{2^{1000}}$ chance that a working set cover within a logarithmic factor of the $LP$ solution is returned.
+%     item For 3-CNF Satisfiability, just setting every variable to true with 50% probability has expected weight greater than or equal to half of the optimal. This can be generalized, setting each to true with some probability $p_i$, for an expected probability of up to $sqrt{5} - 1$, by setting all singleton clauses to whatever satisfies them, and everything else to true with 50% probability.
+%     item Another algorithm for 3-CNF Satisfiability is to find an LP-relaxation
+% end{itemize}
+
+end{document}

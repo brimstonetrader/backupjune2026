@@ -1,0 +1,29 @@
+EXACT
+
+def best_response_value(history, br_player):
+    if terminal(history): return payoff(history, br_player)
+    if chance(history):
+        return sum(p(a)*best_response_value(history+a, br_player) for a in actions)
+    if current_player(history) == br_player:
+        return max(best_response_value(history+a, br_player) for a in actions)
+    else:  # opponent
+        info = information_set(history)
+        return sum(sigma[info][a] * best_response_value(history+a, br_player) for a in actions)
+        
+        
+        
+APPROXIMATE
+
+for i in range(N):
+    history = root
+    while not terminal(history):
+        if chance(history): sample chance
+        elif current_player(history) == br_player:
+            a = argmax_estimated_value(history)  # greedy, can use rollout heuristics
+        else:
+            a = sample_from_sigma(info(history))
+        history += a
+    returns[i] = payoff(history, br_player)
+estimate = mean(returns)
+CI = mean ± z * std(returns)/sqrt(N)
+        

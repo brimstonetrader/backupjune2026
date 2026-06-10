@@ -1,0 +1,70 @@
+#include "types.h"
+#include "stat.h"
+#include "user.h"
+
+#define NUM_CHILDREN 3
+#define NUM_HOGS 2
+
+void
+worker(char *name, int work_units)
+{
+  int i, j;
+  int count = 0;
+  int start_time = uptime();
+  
+  for(i = 0; i < work_units; i++) {
+    for(j = 0; j < 1000000; j++) { count++; }
+  }
+  
+  int end_time = uptime();
+  printf(1, "%s (pid %d): completed %d units in %d ticks\n", name, getpid(), work_units, end_time - start_time);
+}
+
+void
+cpu_hog(int id)
+{
+  int i, j;
+  int count = 0;
+  printf(1, "CPU Hog %d (pid %d): starting infinite loop\n", id, getpid());
+  for(i = 0; i < 30; i++) {
+    for(j = 0; j < 1000000; j++) { 
+      count++; 
+    }
+  }
+  printf(1, "CPU Hog %d (pid %d): yielding after consuming CPU\n", id, getpid());
+}
+
+int
+main(int argc, char *argv[])
+{
+  int i, pid;
+  
+  printf(1, "Creating %d CPU-intensive processes...\n", NUM_HOGS);
+  printf(1, "Then creating %d worker processes...\n", NUM_WORKERS);
+  printf(1, "Workers should NOT starve despite hogs running first.\n\n");
+  
+  for(i = 0; i < NUM_HOGS; i++) {
+    pid = fork();
+    if(pid == 0) { cpu_hog(i + 1); exit(); }
+  }
+  
+  sleep(5);
+  for(i = 0; i < NUM_WORKERS; i++) {
+    pid = fork();
+    if(pid == 0) {
+      char name[20];
+      name[0] = '1';
+      name[1] = '2';
+      worker(name, 20);
+      exit();
+    }
+  }
+  printf(1, "Parent: All processes created, waiting for completion...\n\n");
+  for(i = 0; i < NUM_HOGS + NUM_WORKERS; i++) { wait(); }
+  
+  printf(1, "\nDone!\n");
+  printf(1, "With aging: Workers got CPU time despite hogs running first\n");
+  printf(1, "Without aging: Workers would have starved\n");
+  
+  exit();
+}

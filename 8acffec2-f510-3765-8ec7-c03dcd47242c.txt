@@ -1,0 +1,13 @@
+@article{8acffec2-f510-3765-8ec7-c03dcd47242c,
+ ISSN = {0025570X, 19300980},
+ URL = {http://www.jstor.org/stable/2690833},
+ author = {Douglas M. Campbell and David Radford},
+ journal = {Mathematics Magazine},
+ number = {4},
+ pages = {252--261},
+ publisher = {[Mathematical Association of America, Taylor & Francis, Ltd.]},
+ title = {Tree Isomorphism Algorithms: Speed vs. Clarity},
+ urldate = {2024-12-10},
+ volume = {64},
+ year = {1991}
+}

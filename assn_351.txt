@@ -1,0 +1,21 @@
+ - I’d like to get the final presentations set up for Week 15.  We will have the groups present and I would like to request that you prepare a few things for this week.  
+ 
+ (1) Peer Evaluation google form for each student to fill out for each group.  It should include a dropdown of each group.  And using google forms, it should require uic.edu sign in for submitting the form.  The form itself should have the students numerically evaluate the team in four categories: overall idea (originality, creativity, etc), technical execution of the backend (choice of DS and other algorithms), front end UI (design, ease of use, etc.), and presentation (communication, slides, etc.).  Then, there should be one open ended response where the students should leave a piece of positive feedback about the group’s project (something they liked or something they thought the group did very well).  
+ 
+ (2) TA Evaluation google form for each TA to fill out for each group.  This should be expanded on from the peer evaluation but should be able to be filled out during the presentations.  Can you draft something up and share with me for feedback?  ChatGPT is pretty good at drafting this kind of things up.  
+ 
+ (3) Schedule the two days during Week 15 and slots for each group to present in.  To determine time limit, just divide the groups evenly into the full time (with 2-3 minute buffer in between).  
+ 
+ (4)  A google form for them to submit links to their Google slides (just have a drop down with Group names and short answer response for the link).  We will ask them to create this blank and submit the link to FGP6 meeting so we have the links. 
+ 
+ (5) A pdf document with guidance for the students on what we expect for the presentation including the rubrics (links to the forms is fine).  We should include: 
+   (a) time limit, 
+   (b) they must use Google slides and submit their link to the Google form.  they can use their won computer if they’d like but we want to links as a bare minimum so they can use the classroom computer, if needed.  
+   (c) all members of the team must contribute to the presentation (have a speaking role); 
+   (d) overall presentation should include: introductions of all members including their role on the project, what track they chose, what their goals of the project were (why did they choose it?  what does it solve?  why are they interested?  why is it needed?  etc.), which advanced data structures they used, overview of back end, overview of front end, a full demo of the working project, where did they get their data, what did they learn through the process, what future work is remaining, etc.  
+   (e) We will take team photos and provide to students to use for LinkedIn or resume building, they should plan accordingly (or let us know if they do not want them).  We will take them while they are presenting and a posed photo.
+
+
+
+
+

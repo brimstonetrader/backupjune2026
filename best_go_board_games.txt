@@ -1,0 +1,8 @@
+quoridor
+gomoku
+amazons
+aries
+go
+lines of action
+ayu
+othello

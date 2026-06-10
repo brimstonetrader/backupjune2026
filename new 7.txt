@@ -1,0 +1,73 @@
+============================================================
+Game: Kuhn Poker
+============================================================
+
+  -- CFR BR: player 0 vs fixed RWYWE (player 1) --
+  Building RWYWE tabular policy for player 1...
+  Running CFR (3000 iterations)...
+  (using C++ pyspiel solver)
+    iter   500 | BR value for player 0: 0.006668
+    iter  1000 | BR value for player 0: 0.002762
+    iter  1500 | BR value for player 0: 0.000879
+    iter  2000 | BR value for player 0: -0.000253
+    iter  2500 | BR value for player 0: -0.000428
+    iter  3000 | BR value for player 0: -0.000304
+
+    On-policy value (RWYWE as p0) :   0.009400
+    BR value (CFR average policy)          :  -0.000304
+    BR gain                                :  -0.009704
+
+  -- CFR BR: player 1 vs fixed RWYWE (player 0) --
+  Building RWYWE tabular policy for player 0...
+  Running CFR (3000 iterations)...
+  (using C++ pyspiel solver)
+    iter   500 | BR value for player 1: 0.085572
+    iter  1000 | BR value for player 1: 0.085567
+    iter  1500 | BR value for player 1: 0.085564
+    iter  2000 | BR value for player 1: 0.085558
+    iter  2500 | BR value for player 1: 0.085582
+    iter  3000 | BR value for player 1: 0.085564
+
+    On-policy value (RWYWE as p1) :   0.072333
+    BR value (CFR average policy)          :   0.085564
+    BR gain                                :   0.013231
+
+  NashConv (sum of BR gains) :   0.003527
+  Exploitability             :   0.001764
+
+============================================================
+Game: Leduc Poker
+============================================================
+
+  -- CFR BR: player 0 vs fixed RWYWE (player 1) --
+  Building RWYWE tabular policy for player 1...
+  Running CFR (3000 iterations)...
+  (using C++ pyspiel solver)
+    iter   500 | BR value for player 0: 0.202653
+    iter  1000 | BR value for player 0: 0.202334
+    iter  1500 | BR value for player 0: 0.202244
+    iter  2000 | BR value for player 0: 0.202167
+    iter  2500 | BR value for player 0: 0.202128
+    iter  3000 | BR value for player 0: 0.202102
+
+    On-policy value (RWYWE as p0) :   0.568290
+    BR value (CFR average policy)          :   0.202102
+    BR gain                                :  -0.366188
+
+  -- CFR BR: player 1 vs fixed RWYWE (player 0) --
+  Building RWYWE tabular policy for player 0...
+  Running CFR (3000 iterations)...
+  (using C++ pyspiel solver)
+    iter   500 | BR value for player 1: 0.778119
+    iter  1000 | BR value for player 1: 0.771992
+    iter  1500 | BR value for player 1: 0.770475
+    iter  2000 | BR value for player 1: 0.769977
+    iter  2500 | BR value for player 1: 0.769934
+    iter  3000 | BR value for player 1: 0.769952
+
+    On-policy value (RWYWE as p1) :  -0.069209
+    BR value (CFR average policy)          :   0.769952
+    BR gain                                :   0.839161
+
+  NashConv (sum of BR gains) :   0.472973
+  Exploitability             :   0.236487

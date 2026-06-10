@@ -1,0 +1,23 @@
+\begin{table}[t]
+  \caption{Average runtime per round in milliseconds by game and method. For MCCFR, regret accumulation time given on the left, when higher than ten milliseconds.}
+  \label{sample-table}
+  \begin{center}
+    \begin{small}
+      \begin{sc}
+      \begin{adjustbox}{width=\linewidth}
+        \begin{tabular}{lccccr}
+        
+          \toprule
+Kuhn Poker  & 0.53  &  0.1   & 0.086 & .05          &   .049        // 
+Liar's Dice & 37.36 &  37.32 & 1.76  &  25, 0.074   & 256, 0.079    //   
+Tic-Tac-Toe & 15.47 &  2230  & 2190  & 44, 0.12     &  415, 0.12    //   
+Connect 4   & 74.3  &  -     & -     &  115, 0.29   &  1256, 0.3    //
+Hex         & 3760  &   -    & -     &  1673, 1.99  &  17825, 2.23  //
+          \bottomrule
+        \end{tabular}
+      \end{adjustbox}
+      \end{sc}
+    \end{small}
+  \end{center}
+  \vskip -0.1in
+\end{table}

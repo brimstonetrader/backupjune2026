@@ -1,0 +1,246 @@
+BOARD SCOPE
+
+tiling, dimensions, removal
+
+toggles:
+    toroidal
+    organic
+    
+
+INITIAL SETUP
+
+done through GUI on board. 
+-can be controlled random
+
+
+GENERIC TOGGLES
+
+komi
+passing legality
+gravity
+    laying, movement, applied x times per turn
+pie rule
+
+LOOP
+
+    FOR EVERY
+        group on board 
+        possible move with particular cube
+        possible capture 
+        possible move 
+    
+    IF 
+        you have moved so far
+        you/opponent just created largest/smallest/any/fewer groups
+        you/opponent just created formation 
+        cube/type of cube hasn't been laid/moved 
+        x cubes in (x,y) or d of location or some cube 
+        location in line of sight of x cubes O/OD 
+        parity of group/#groups/#cubes =0,1
+        
+    THEN
+        movement 
+        laying 
+        win/loss
+        not allowed
+
+GROUP
+
+    hetero/homo
+    line b/unb
+    O/OD connected region
+    sanctity enforced
+    subgroups
+    
+    
+MOVEMENT 
+
+    group/cube 
+    stacking
+    every move must come closer to location 
+    leaping (het/hom)
+    gliding (W or WC)
+    pulling
+    pushing
+    switching (het/hom)
+    towards het/hom group 
+    within certain zone
+    compulsory capture
+    
+    
+    
+    linear (mancalan) (x,range,inf,size of group)
+    orthogonal (x,range,inf,size of group)
+    diagonal (x,range,inf,size of group)
+    hippogonal ((x,y))
+    spiraline (notated like (1, 8, 10, 11). Spiral looks like
+              4 3 2 11
+              5 x 1 10
+              6 7 8 9                 and so on
+    
+    
+    
+CUBE LAYING P1/P2 PER TURN PER TYPE
+
+on squares/intersections/walls
+
+players have hand of pieces. Each turn, may lay down n (of choice, of opponent’s choice, random cube, random location, by CA rule)
+
+if on walls 
+cubes on squares may not pass through enemy cubes on walls
+friendly cubes on walls
+	may not be crossed
+	may be crossed, but is removed, changing color of other one
+
+CA Rules:
+	Define neighborhood
+	Define x states
+		For every state
+			Must have x y neighbors to become z
+			Must have x y neighbors to remain
+			Else die
+		Protagonist
+			Standard movement
+				For every state 
+Turns z degrees
+Flips x to y.
+				Move forward one
+				
+
+TOGGLE SWITCHES
+
+One per group
+Create new group
+Within N() 
+Must capture opponent
+Not/Within (x, y) of het/hom cube/last cube
+Where cube just moved from (or intermediate along path)
+Display hand
+
+
+CUBE TRANSFORMATION
+ 
+Type to Type
+
+	On Choice at turn=x
+at N()
+On (connection)
+On stacking(n)
+		Multiply like gounki
+On proximity()
+On custodian(group or cube, sides)
+On pushed off board
+
+
+TOGGLE SWITCHES
+	Transformation is free action
+Own/opponent may reintroduce
+
+
+
+CUBE STACKING
+
+Ownership -> player with most cubes in stack
+	       -> player with top cube in stack
+
+
+Movement
+	Mancalan sowing
+		random/one type
+		Choose where/mixed stack
+	Furling
+		random/one type
+		Choose where/mixed stack
+	Sacksonian travel
+		Sanctified
+		Pulverized
+	Send top cube to other bottom cube of same type (transporter)
+		Free action toggle
+
+Pulverization through
+	Movement by choice
+	Explosion style
+
+(Transformation)
+
+TOGGLE SWITCHES
+	Mixed stack
+
+
+CONNECTION
+	
+N TO N
+
+Per player, N and N, O/D
+	Win state
+	X Points
+	Additional N
+
+LOOP
+	Win state
+	X Points
+
+	TOGGLE SWITCHES
+	O/D
+hom/het
+	entire/majority
+	Captures interior
+	Immune to capture
+	Edges are safe 
+
+SYMMETRY
+
+
+# rotational symmetries, reflectional symmetries
+About particular axis or general
+	Add points [entropy like]
+	Win state
+	Place cube at N()
+
+Toggle 1 not included	
+
+
+POLYOMINO
+	
+can be general, particular type, particularly different, particular place, or controlled random.
+
+On creation of this polyomino
+	Remove it
+	Add x points to tally (numeric value represented within hand)
+	Win state
+	Lay cube (within movement) (per turn)
+	Immune to capture
+	Toggle display polygon off to side
+	move is illegal
+	Toggle all / some rotational/reflectional symmetries
+
+
+WIN STATE P1/P2 PER TYPE
+
+misere y/n (turns into lose state)
+reach a square/sgroup on the grid
+create aforementioned connection
+remove all cubes 
+get all cubes in same/different group 
+empirical 
+largest group cascading
+closest point tally to x
+
+PIE RULE
+
+restriction on first turn (separate movement or laying protocol) or
+standard pie rule
+pie rule n times 
+
+POINT TALLY
+
+Starting values x vs y
+Add at end of game by
+	Connections by type
+	Territory by cube type
+		Lines of Sight
+		Looping
+	Basic Count by cube type
+		Largest Group Cascading
+		Total
+	Cubes in N() by cube type

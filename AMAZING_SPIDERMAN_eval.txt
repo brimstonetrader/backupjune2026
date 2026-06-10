@@ -1,0 +1,18 @@
+Attached is a CLIPS project for you to evaluate.  Please look at the domain description and
+task the system is to automate.  Are they clear?  Can task be implemented using procedural programming?
+Do the logic of the rules make sense?
+
+The domain is medical triage, diagnosing four different diseases and assessing many more symptoms. The  description is clear, and the task is possible to implement using procedural programming. The logic of the rules mostly make sense, but there are some which contradict each other. For example, the presence of diarrhea flags three different diseases
+
+Run the test cases; do they run as expected?  Try two other hypothetical cases, do results make sense?
+
+I was not able to run this agent. I get errors, because the defrules lack arrows, and some variables lack the "name" keyword. I tried to fix these, but was still unable to compile the agent. If it were to run successfully, it would not match the given testcases, as there is no function or rule which asks about specific symptoms. I am also unsure how the system would hypothetically choose which disease to diagnose a patient with if their symptoms align to multiple illnesses, as there is not a function which catches that.
+
+Please comment on clarity and plausibility of implementation.  Score on 0 - 10 scale (10 is best).
+
+The area and tactics for this project are reasonable. The implementation did not compile, and appears to have broader theoretical issues. The supplied PDF is well-written and explains the intention well.
+
+Final Grade: 7/10
+
+Submit your evaluation in a text of pdf file named nickname_eval (nickname being the nickname of the
+Project you are evaluating) by the end of this Monday, please.

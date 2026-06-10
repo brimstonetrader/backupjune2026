@@ -1,0 +1,56 @@
+Task: Implement the MSApriori algorithm. You can use any programming language of your choosing.
+
+Input: You will be given two input files in plain text.
+
+1. The data file. Each line is a transaction, and each item is represented with an integer number, e.g.,
+    10, 50, 30, 40,
+    1, 2, 4, 6, 8, 9, 10
+    3, 4, 5
+    7, 9, 20
+
+2. The parameter file. It contains the MIS values, support difference constraint, and minimum confidence for rule generation:
+
+    MIS(1) = 0.02
+    MIS(2) = 0.04
+    …
+    MIS(rest) = 0.01
+    SDC = 0.003
+    minconf = 30%
+
+rest: all other items that are not given specific MIS values.
+SDC: support difference constraint.
+minconf: minimum confidence
+
+Output: The output file must follow the exact format shown below, as it will be graded automatically using a program. You are only required to generate rules with a single consequent on the right-hand side. Note that indentation within each line is not significant; however, the placement of round brackets must exactly match the example provided. No additional symbols or punctuation should be used.
+
+
+(Length-1 <number of length 1 frequent itermsets>
+    [length-1 itemset 1] : [freq_count] : [tailcount]
+    [length-1 itemset 2] : [freq_count] : [tailcount]
+    …
+)
+(Length-2 <number of length 2 frequent itermsets>
+    [length-2 itemset 1] : [freq_count] : [tailcount]
+    [Rule 1] : [confidence]
+    [Rule 2] : [confidence]
+    …
+    [length-2 itemset 2] : [freq_count] : [tailcount]
+    …
+)
+…
+
+
+For example:
+(Length-1 3
+    (1) : 20 : 1000
+    (2) : 100 : 1000
+    (11) : 22 : 1000
+)
+
+(Length-2 2
+    (1 2) : 15 : 100
+    (2 -> 1) : 80%
+    (2 3) : 30 : 25
+    (2 -> 3) : 40%
+    (3 -> 2) : 50%
+)

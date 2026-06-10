@@ -1,0 +1,46 @@
+Post-Exam Analysis
+
+
+1e. 
+
+It is the first line of trap() in trap.c, the definition or "switch(tf->trapno){"
+
+I was thinking trap was a syscall, which wasn't entirely correct. I should have looked at the trap definition.
+
+1f. 
+
+A possible issue is race conditions due to shared data access.
+
+I was thinking of an error we'd discussed in class, but I don't think it related to interrupt handling. I should have looked at a more specific section of the book.
+
+2a. 
+
+The first sector of the boot disk is kept at address 0x7C00.
+
+I got this one wrong because I was too vague, only referring to something true of everything. I should have looked closer at the address to give a more precise answer.
+
+
+
+
+
+
+
+
+1b. The entry point in assembly, which then calls the trap handler.
+
+'call trap' 
+
+1c. 
+
+
+3b. 
+
+3c. 
+
+4a.
+
+4b.
+
+4c.
+
+4d.

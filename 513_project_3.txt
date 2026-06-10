@@ -1,0 +1,9 @@
+For my project I have created a decision network designed to predict the outcome of the forthcoming 2024 US Presidential Election based on the Harris campaign's policy choices. It can be used to consult on real-world impact of Foreign Policy, Economic Policy, and Abortion Stance. There are some shortcomings with the project, as I was only able to create nodes for the five closest states in the election. A broader network could account for more states, and more policies. I gathered most of my data from fivethirtyeight's 2024 Election Tracker, which provides estimates of likelihood of win for all US states. 
+
+- There are utility nodes for each state, which track the amount of electoral votes won for each.
+- There are three decision nodes.
+  - For Foreign Policy, the user can choose whether Kamala will back Netanyahu in the ongoing War in Gaza, or withhold weapons and other aid. 
+  - For Economic Policy, the user can choose whether the campaign should focus on Housing Reform or Inflation Reduction.
+  - For Abortion, the user can choose between Pro-Choice and Neutral.
+- There are also nature nodes for each state, which are influenced by the decisions above.
+- All of these are linked to a "Result" Node, which returns the probability of the total electoral votes for a candidate exceeding 270. It is assumed that Kamala will have 237 votes, and Donald 235, from the other 45 states, so a tie is impossible.

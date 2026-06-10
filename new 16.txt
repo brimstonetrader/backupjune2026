@@ -1,0 +1,41 @@
+
+function TRAIN_CFR(T):
+  initialize RegretSum, StrategySum to 0 for all infosets/actions
+  for t = 1..T:
+    for i in {1,2}:                      
+      CFR(state = ROOT, i, pi1 = 1, pi2 = 1)
+  return AverageStrategy = normalize(StrategySum) for every infoset
+
+function CFR(state, i, pi1, pi2):
+  if state is terminal:
+    return payoff_to_player1(state) 
+
+  if state is chance:
+    v = 0
+    for outcome o with prob p:
+      v += p * CFR(next(state,o), i, pi1, pi2)
+    return v
+
+  p = player_to_act(state)          
+  I = infoset_of(p, state)
+  A = legal_actions(state)
+
+  pos = [max(RegretSum[I][a], 0) for a in A]
+  S = sum_over_legal_actions(I, pos[a])
+  for a in A:
+    if S > 0: 
+      sigma[a] = pos[a] / S else sigma[a] = 1 / |A|
+
+  for a in A:
+    if p == 1: v_a[a] = CFR(next(state,a), i, pi1 * sigma[a], pi2)
+    else:      v_a[a] = CFR(next(state,a), i, pi1,            pi2 * sigma[a])
+
+  v = sum_a sigma[a] * v_a[a]
+  if p == 1: pi_p = pi1; pi_opp = pi2 
+  else:      pi_p = pi2; pi_opp = pi1
+  if p == i:
+    for a in A:
+      RegretSum[I][a]   += pi_opp * (v_a[a] - v)
+      StrategySum[I][a] += pi_p   * sigma[a]
+
+  return v

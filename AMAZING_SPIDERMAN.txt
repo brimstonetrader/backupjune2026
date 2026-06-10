@@ -1,0 +1,15 @@
+nAttached is a CLIPS project for you to evaluate.  Please look at the domain description and
+task the system is to automate.  Are they clear?  Can task be implemented using procedural programming?
+Do the logic of the rules make sense?
+
+Run the test cases; do they run as expected?  Try two other hypothetical cases, do results make sense?
+
+Please comment on clarity and plausibility of implementation.  Score on 0 - 10 scale (10 is best).
+
+Submit your evaluation in a text of pdf file named nickname_eval (nickname being the nickname of the
+Project you are evaluating) by the end of this Monday, please.
+
+
+Score: 10/10.
+
+The domain is medical triage, diagnosing four different diseases and assessing many more symptoms. 

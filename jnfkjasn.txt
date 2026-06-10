@@ -1,0 +1,86 @@
+import pandas as pd
+import math
+import re
+
+
+df = pd.read_excel(
+    'training-Obama-Romney-tweets.xlsx',
+    sheet_name='Obama',
+    header=0,
+    skiprows=[1],
+)
+
+
+
+# Filter valid rows, then split
+df = df[df['Unnamed: 4'].isin([1, 0, -1]) & df['Anootated tweet'].notna()]
+# train, test_df = df.iloc[:-1000], df.iloc[-1000:]
+train, test_df = df, df
+
+print('pos', len(df[df['Unnamed: 4'] == 1]))
+print('neu', len(df[df['Unnamed: 4'] == 0]))
+print('neg', len(df[df['Unnamed: 4'] == -1]))
+
+train_pos = train[train['Unnamed: 4'] == 1]
+train_neu = train[train['Unnamed: 4'] == 0]
+train_neg = train[train['Unnamed: 4'] == -1]
+max_count = max(len(train_pos), len(train_neu), len(train_neg))
+
+import numpy as np
+train = pd.concat([
+    train_pos.sample(max_count, replace=True, random_state=42),
+    train_neu.sample(max_count, replace=True, random_state=42),
+    train_neg.sample(max_count, replace=True, random_state=42),
+])
+
+dpos = {}
+dneu = {}
+dneg = {}
+for _, row in train.iterrows():
+    tweet = row['Anootated tweet']
+    label = row['Unnamed: 4']
+    for word in str(tweet).split():
+        if label == 1:  dpos[word] = dpos.get(word, 0) + 1
+        if label == 0:  dneu[word] = dneu.get(word, 0) + 1
+        if label == -1: dneg[word] = dneg.get(word, 0) + 1
+
+vocab = set(dpos) | set(dneu) | set(dneg)
+possum, neusum, negsum = sum(dpos.values()), sum(dneu.values()), sum(dneg.values())
+
+import heapq
+top = lambda d: heapq.nlargest(20, d, key=d.get)
+print("TOP POS:", top(dpos))
+print("TOP NEU:", top(dneu))
+print("TOP NEG:", top(dneg))
+
+# See overlap between neg and pos
+overlap = {w for w in dneg if dneg[w] > 5 and dpos.get(w, 0) > 5}
+# print(f"\nHigh-overlap words (in both pos+neg): {len(overlap)}")
+# print(sorted(overlap, key=lambda w: min(dneg[w], dpos[w]), reverse=True)[:20])
+
+def classify(text):
+    p_pos = p_neu = p_neg = 0
+    total = len(train)
+    for word in text.split():
+        # if word not in overlap:
+        p_pos += math.log(dpos.get(word, 0) + 1) - math.log(possum + len(vocab))
+        p_neu += math.log(dneu.get(word, 0) + 1) - math.log(neusum + len(vocab))
+        p_neg += math.log(dneg.get(word, 0) + 1) - math.log(negsum + len(vocab))
+    if p_pos > p_neu and p_pos > p_neg: return 1
+    elif p_neu > p_neg: return 0
+    else: return -1
+
+rate = [0, 0]
+for _, row in test_df.iterrows():
+    if classify(str(row['Anootated tweet'])) == row['Unnamed: 4']: rate[0] += 1
+    rate[1] += 1
+print('Accuracy: ', rate[0] / rate[1])
+
+preds = [classify(str(r['Anootated tweet'])) for _, r in test_df.iterrows()]
+actuals = list(test_df['Unnamed: 4'])
+for label, name in [(1, 'Positive'), (-1, 'Negative')]:
+    tp = sum(p == label == a for p, a in zip(preds, actuals))
+    fp = sum(p == label != a for p, a in zip(preds, actuals))
+    fn = sum(p != label == a for p, a in zip(preds, actuals))
+    p, r = tp/(tp+fp or 1), tp/(tp+fn or 1)
+    print(f"{name}: P={p:.2f} R={r:.2f} F1={2*p*r/(p+r or 1):.2f}")

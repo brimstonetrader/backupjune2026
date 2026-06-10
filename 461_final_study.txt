@@ -1,0 +1,54 @@
+how does xv6 enforce strict isolation?
+    separate page tables per process
+    each process maps only its own memory
+    ensuring pte_u bit is set
+    
+what does walkpgdir() return?
+    pointer to a page table entry
+    
+how many ways to trap into the xv6 kernel?
+     five, by timer, ide, keyboard, default, or pagebreak 
+     
+     
+File descriptor 2 is the standard error (stderr) stream. In xv6 (and Unix-like systems), when a process starts, it inherits three standard file descriptors:
+
+0: stdin (standard input)
+1: stdout (standard output)
+2: stderr (standard error)   (check init.c)
+
+
+#define NDIRECT 12
+#define NINDIRECT (BSIZE / sizeof(uint))
+#define MAXFILE (NDIRECT + NINDIRECT)
+```
+
+Currently, `BSIZE = 512` bytes (from `fs.h`).
+
+## Calculation if BSIZE were 1024 bytes:
+
+With 1024-byte blocks:
+
+1. **Direct blocks**: `NDIRECT = 12` blocks
+   - Data: `12 × 1024 = 12,288 bytes`
+
+2. **Indirect block**: 1 block pointer in `addrs[NDIRECT]`
+   - Each indirect block can hold: `1024 / 4 = 256` block addresses (since `sizeof(uint) = 4`)
+   - Data: `256 × 1024 = 262,144 bytes`
+
+3. **Total maximum file size**:
+```
+   MAXFILE = NDIRECT + NINDIRECT
+           = 12 + 256
+           = 268 blocks
+   
+   Max size = 268 × 1024 = 274,432 bytes = 268 KB
+   
+   
+A signal is delivered when the process returns from kernel mode to user mode. (trap.c)
+
+Returning to where the userspace program was interrupted by the sig_alarm is a tricky part. How can this be implemented?
+Answer: This can be implemented by saving and restoring the trap frame.
+
+In xv6, a signal is delivered only when the process is about to return to user space—specifically during the trap return path. sigreturn() returns to where the userspace program was interrupted by sigalarm
+
+how is pid 1 created in xv6?     userinit() -> creates page table, uvm, and calls initcode

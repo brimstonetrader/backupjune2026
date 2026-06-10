@@ -1,0 +1,156 @@
+X - verify that the exploitability is bounded by the k safety budget. 
+X - verify my results are consistent with original paper's results (for the original rwywe version).
+X - still missing an explanation of the goals of the paper
+X   - explain SAFE(\epsilon)
+        - "act like a compiler, no use without define"
+            - ex. sigmas in gift def (which should be later)
+X   - the safety definition should be more rigorous
+X   - no symbols in introduction
+X   - cite the original paper's proposition to show that rwywe is safe. 
+X   - the m of pi is not defined, just stated that it's not scalable. 
+X   - the opponent model isn't super well specified in the paper, maybe go into that a little.
+X       - talk about tradeoffs between accuracy and scalability. 
+X   - come up with real-world setting in which this is applicable, bearing in mind the need for pre-training. 
+X   - formally go through how many rounds of pretraining are necessary
+    
+    
+Crossed off a lot on the list, still need to write a few more things. Revised and moved stuff around. At work on testing RWYWE to verify it's in line with the original paper: k is a bit too high and payoffs are a bit too low, not sure why. Also, I wasn't sure how I'd ensure exploitability is bounded by k, as on a per-round basis it often trivially
+
+
+    > opening question -> how exploitable is a random kuhn poker opponent? Is that maximum less than 1? (Is the OG paper wrong?)
+    
+    > is this the usual defitinition of exploitability? it's not . change it to the difference between best response and actual strategies.
+        well maybe not. some theorems in the paper might use the definition 
+        
+        options:
+            - go through the paper and conclude that everything is fine under either notion of exploitability
+            - define a new notion and be careful not to confuse them. regular exploitability is used in a lot of the code.
+    > make safety definition more rigorous
+X   > paragraph on pretraining limitations:
+        > assuming we buy that this limitation is inherent , safety may no longer be the right property. The decayed k kind of helps assuage the problem that k is increasing through training. Maybe define a new property? Against a large population, say.  
+        >there exists a lot of work on opponent modeling these days. Perhaps multiple opponent models? 
+        
+X   > cite that one paper dietzel sent you. 
+    
+    
+> Best response against a uniform random strategy for one player is 0.5 or 0.417, either way way below 1. So the current chart shows it roughly approximates a best response, which is how it should behave. Not sure what's going on with the original chart, but this means my results are good?
+
+> I revised and added definitions, nothing too notable. 
+
+> So the model never has risk exceed k for the baseline, but the new version does sometimes, because its best response calculation is slightly weighted by the opponent model. This part was confusing because of the two competing notions of exploitability but i think it's straight now. 
+
+> I've been considering it, but I'm not too sure about a different metric to judge this method on. I was thinking maybe of an n-dimensional bell-curve of strategies, and how capable a system is against a wide radius about its equilibrium center (which itself could not be a single point). 
+
+
+implement sophisticated static and dynamic, make table with both versions that's similar to table 1.
+
+> BIG PICTURE QUESTION: adding fxn apx is good in many respects, but it's worse in that it needs more data before being reasonable. what should we do abt that? not just the metric, also that it could work against a broad population. so we need a pretrained model that can be finetuned to a particular opponent safely. how do we do both these things effectively. 
+
+tomorrow:
+    work on expanding 2.1 and 3 
+    do some experiments on how few practice runs are needed for good performance
+    
+        
+
+next wednesday at 12 in person. 
+
+https://uic.zoom.us/j/4567087177?pwd=am5GRmtBMm9HeW5iM3p2bEd0WlZrQT09
+
+
+1 - fully uniform random 
+2 - random within 0.2 of optimal, chosen at outset and stuck with throughout 
+3 - first 100 hands uniform random, then switch to best response against rwywe at that point 
+4 - full GTO
+
+
+you're skipping over the extensive form/private info things , which algorithm 6 adds stuff for.
+also justify the calculating at each move as opposed to deciding a policy up front. 
+how k is updated in extensive form, should k be altered midgame as the budget is used? maybe an auxilliary k? or dividing evenly? 
+safe set computation in a private information setting when choosing strategy as you go (private information makes this harder and not covered in the original paper).
+my currently implemented k update is not using my strategy but my actions, which makes it RWYW not RWYWE, so i should go back to update based on strategy profile (can be approximated) as opposed to outcome. 
+// try (u(pi,tau) - u(pi,br(pi))) + (u(pi,br(pi)) - v)  is easier.
+
+
+next week:
+    write more on when k can be calculated 
+    
+        It can't be calculated per-turn because that requires knowing the game value which requires knowing hidden information. You can average over infosets, but that's not pessimistic and has no guarantee.
+    
+    strategies for divvying k among all rounds
+    
+        between the two, divvying by round performs worse against strong and weak opponents in leduc poker, although the difference is marginal.
+    
+    
+    rewrite and redo tests on og rwywe with same tweaks.
+    need to change the pitch of the paper if im arguing not to use BR in extended form HI games. 
+        could abandon the idea of safety, just using spirit of idea and showing it works empirically.
+        could show an alternate guarantee which is reasonable enough.
+        could redefine goal. 
+        
+        
+    a virtue of their schema is that safety guarantees are independent of the opponent model.
+    perhaps a fundamental tradeoff wrt private information.
+    in some sense its the "in expectation" that's causing trouble. Maybe think more about weighting things by their probability of occurance? Try to secure a lower bound, that doesn't fix that it's overly conservative, but does that it's tough to calculate. 
+
+    (u(pi,a) - u(pi*,a)) + (u(pi*,a) - u(pi*))
+    
+        maybe safety is not a guarantee, but a priority. i dont think it's reasonable to have a pessimistic tau update when that means 99.9% of infostates are assumed to be totally suboptimal. thus we could argue that this is the natural extension of this algorithm to large game trees.
+
+
+- had some github issues
+- rewrote the original code a lot bc the fixes made previous tests break, now it's back to normal, except for the still failing opp3.
+    if it's -0.2 then safety must be violated, rewrite the k checking code.
+
+- new test for letting k stay vs budgeting per round
+    budgeting per round leads to slightly higher returns against weak and strong opponents.
+    
+- would a lower bound for tau be v(pi,br(pi)) * (1 - prob of path of play)?
+    >= pi(tau)(1-u((pi,br(pi)))(u(a) - v) ? 
+    
+    
+
+- maybe safety is not a guarantee, but a priority. i dont think it's reasonable to have a pessimistic tau update when that means 99.9% of infostates are assumed to be totally optimal. thus we could argue that this is the natural extension of this algorithm to large game trees, as being accurate to the og would be basically just its baseline. Show, say, that the purely safe exploitation algorithm can only exploit a "worst response" strategy in leduc poker by some very small fraction. 
+
+
+
+
+
+
+
+- the thing from last time: I ran trials in kuhn poker with varying amounts of pretraining against a sophisticated static opponent. In these training didn't make much difference. I ran it on Leduc with a MCCFR opponent instead of an equilibrium and it showed the need. 
+- Reran last weeks test with the revised model, still confused on why BR is lower than the expected RWYWE on dynamic.  
+- I did the rwywe with the pessimistic tau estimate, and did the new version by keeping a dictionary of infoset->strategy and taking a weighted average between them. I'm updating k at the end of the extensive game, which is necessary bc of the reveal of hidden information only coming at the end. This means k is narrowed through all turns, first-come first-served. 
+- i added a few paragraphs about rwywe in the case of HI and EFG. Changed pseudocode and added a new one.
+
+    looking at their argument against rwyw they show safety can be violated after two rounds. in their rps example, they show the game value can be negative. what is the limit of how bad it can get? Safety in expectation. 
+    
+    look more into people reevaluating rwyw. 
+    
+    
+    
+    
+    a "baiting" strategy may be worse than best response. 
+    
+    say they can switch between br and uniform random depending on whether k is positive.
+    
+    One of two scenarios:
+        RWYW has nonpositive k and is thusly playing GTO w exploitability zero
+        
+        RWYW is "up", has positive value, and can potentially be exploited.
+        
+    safety-in-expectation is when an algorithm is expected to achieve the value of the game on a sufficiently long timescale. strategy pi_i is safe if for every opponent strategy pi_{-i} and sufficiently large Q
+    
+    lim_{Q->\inf} (sum_{T=0}^{Q} v_i - u_i(pi_i, pi_{-i})) / Q -> 0
+    
+    RWYW is safe in expectation. 
+    
+    I have two charts of exploitability on avg and payoff on average against br opponent and varying one. It does seem to shrink slowly to GTO which is expected. 
+    
+    Expected distance in n steps is O(sqrt(N)) in a 1d random walk.
+    
+    This is a bit different, bc there is a strong cap, but we can think of this as an absolute value, which makes no difference for the difference. This means O(sqrt(N)) is an upper bound, meaning the weaker sense is true.
+    
+    
+               0
+    
+    0  -1

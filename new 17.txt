@@ -1,0 +1,67 @@
+def warmup_rwywe(game, agent, mccfr_policy, n_episodes, br_recompute_every=10):
+    """Warm up agent against a best response opponent that recomputes periodically."""
+    from open_spiel.python.algorithms import best_response
+
+    def get_agent_tabular():
+        """Snapshot the agent's current policy as a TabularPolicy for BR computation."""
+        tabular = policy_lib.TabularPolicy(game)
+        visited = set()
+
+        def _walk(state):
+            if state.is_terminal():
+                return
+            if state.is_chance_node():
+                for a, _ in state.chance_outcomes():
+                    _walk(state.child(a))
+                return
+            if state.current_player() == agent.player_id:
+                info_str = state.information_state_string(agent.player_id)
+                if info_str not in visited:
+                    visited.add(info_str)
+                    idx = tabular.state_lookup.get(info_str)
+                    if idx is not None:
+                        dist = agent.solver.average_policy().action_probabilities(
+                            state, agent.player_id)
+                        mask  = tabular.legal_actions_mask[idx]
+                        legal = [a for a, m in enumerate(mask) if m]
+                        total = sum(dist.get(a, 0.0) for a in legal)
+                        if total > 0:
+                            for i, a in enumerate(legal):
+                                tabular.action_probability_array[idx][i] = (
+                                    dist.get(a, 0.0) / total)
+            for a in state.legal_actions():
+                _walk(state.child(a))
+
+        _walk(game.new_initial_state())
+        return tabular
+
+    br_opponent = None
+    for ep in range(n_episodes):
+        # Recompute best response periodically
+        if ep % br_recompute_every == 0:
+            agent_tab = get_agent_tabular()
+            br_opponent = best_response.BestResponsePolicy(
+                game, agent.opp_id, agent_tab)
+
+        state = game.new_initial_state()
+        while not state.is_terminal():
+            if state.is_chance_node():
+                outcomes = state.chance_outcomes()
+                a, _ = outcomes[np.random.randint(len(outcomes))]
+                state.apply_action(a)
+            else:
+                pid = state.current_player()
+                if pid == agent.player_id:
+                    action = agent.step(state)
+                else:
+                    dist  = br_opponent.action_probabilities(state)
+                    legal = state.legal_actions()
+                    probs = np.array([dist.get(a, 0.0) for a in legal])
+                    if probs.sum() > 0:
+                        probs /= probs.sum()
+                    else:
+                        probs = np.ones(len(legal)) / len(legal)
+                    action = np.random.choice(legal, p=probs)
+                    agent.inform_action(state, pid, action)
+                state.apply_action(action)
+        agent.on_terminal(state)

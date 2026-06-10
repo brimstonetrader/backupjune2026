@@ -1,0 +1,249 @@
+import numpy as np
+import pyspiel
+import random
+import time
+
+from open_spiel.python.algorithms import exploitability, best_response, outcome_sampling_mccfr
+from open_spiel.python import policy as policy_lib
+
+# Your uploaded files
+from open_spiel.python.examples import rwywe3
+
+
+
+def sample_from_dict(action_probs):
+    """Sample one action from a {action: prob} dictionary."""
+    actions = list(action_probs.keys())
+    probs = np.array([action_probs[a] for a in actions], dtype=np.float64)
+
+    total = probs.sum()
+    if total <= 0:
+        probs = np.ones(len(actions), dtype=np.float64) / len(actions)
+    else:
+        probs /= total
+
+    return np.random.choice(actions, p=probs)
+
+
+def play_episode(game, rwywe_agent, br_policy, rwywe_player, seed=None):
+    """
+    Plays one full game:
+      - RWYWE agent controls rwywe_player
+      - Best-response policy controls the other player
+
+    Returns:
+      returns: terminal returns vector
+    """
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
+
+    state = game.new_initial_state()
+    rwywe_agent.restart()
+
+    while not state.is_terminal():
+        if state.is_chance_node():
+            outcomes, probs = zip(*state.chance_outcomes())
+            action = np.random.choice(outcomes, p=probs)
+            state.apply_action(action)
+            continue
+
+        current_player = state.current_player()
+
+        if current_player == rwywe_player:
+            action = rwywe_agent.step(state)
+            if action is None:
+                # Fallback safety
+                print("RWYWE agent returned None action, sampling uniformly from legal actions.")
+                legal = state.legal_actions(current_player)
+                action = np.random.choice(legal)
+        else:
+            # Best response acts deterministically, but sample anyway in case
+            # the returned policy dictionary is not strictly one-hot.
+            action_probs = br_policy.action_probabilities(state, current_player)
+            action = sample_from_dict(action_probs)
+
+            # Let RWYWE observe opponent action before applying it.
+            rwywe_agent.inform_action(state, current_player, action)
+
+        state.apply_action(action)
+
+    rwywe_agent.on_terminal(state)
+    return state.returns()
+
+
+def evaluate_matchup(game, game_name, num_episodes=1000, train_br_on_avg_policy=True):
+    """
+    Evaluate RWYWE vs best response.
+
+    train_br_on_avg_policy=True:
+        BR is computed against RWYWE's MCCFR average policy, which is the cleanest
+        interpretation of "best response to the model's policy".
+
+    Returns a dict of summary metrics.
+    """
+    # RWYWE as player 0
+    rwywe_agent = rwywe3.RWYWEAgent(game, player_id=0)
+
+    # Baseline average policy learned by RWYWE's internal MCCFR solver
+    avg_policy = rwywe_agent.solver.average_policy()
+
+    # Standard exploitability-style metric
+    try:
+        nash_conv = exploitability.nash_conv(game, avg_policy)
+    except Exception as e:
+        nash_conv = None
+        print(f"[{game_name}] Could not compute nash_conv: {e}")
+
+    # Build a best response for player 1 against RWYWE's baseline avg policy
+    br_policy = best_response.BestResponsePolicy(
+        game=game,
+        player_id=1,
+        policy=avg_policy
+    )
+
+    # Theoretical BR value at the root against the avg policy
+    try:
+        br_root_value = br_policy.value(game.new_initial_state())
+    except Exception as e:
+        br_root_value = None
+        print(f"[{game_name}] Could not compute BR root value: {e}")
+
+    # Simulate actual head-to-head episodes: live RWYWE vs BR policy
+    returns = []
+    start = time.time()
+
+    for ep in range(num_episodes):
+        ep_returns = play_episode(game, rwywe_agent, br_policy, rwywe_player=0)
+        returns.append(ep_returns)
+
+    elapsed = time.time() - start
+    returns = np.array(returns, dtype=np.float64)
+
+    result = {
+        "game": game_name,
+        "episodes": num_episodes,
+        "avg_return_p0_rwywe": float(np.mean(returns[:, 0])),
+        "avg_return_p1_br": float(np.mean(returns[:, 1])),
+        "std_return_p0_rwywe": float(np.std(returns[:, 0])),
+        "std_return_p1_br": float(np.std(returns[:, 1])),
+        "nash_conv_avg_policy": nash_conv,
+        "br_value_vs_avg_policy_from_root": br_root_value,
+        "elapsed_sec": elapsed,
+    }
+    return result
+
+
+def print_result(res):
+    print(f"\n=== {res['game']} ===")
+    print(f"Episodes: {res['episodes']}")
+    print(f"RWYWE average return (player 0): {res['avg_return_p0_rwywe']:.6f}")
+    print(f"BR average return    (player 1): {res['avg_return_p1_br']:.6f}")
+    print(f"RWYWE std dev return (player 0): {res['std_return_p0_rwywe']:.6f}")
+    print(f"BR std dev return    (player 1): {res['std_return_p1_br']:.6f}")
+
+    if res["nash_conv_avg_policy"] is not None:
+        print(f"NashConv of RWYWE baseline avg policy: {res['nash_conv_avg_policy']:.6f}")
+    else:
+        print("NashConv of RWYWE baseline avg policy: unavailable")
+
+    if res["br_value_vs_avg_policy_from_root"] is not None:
+        print(f"Best-response root value vs avg policy (player 1): {res['br_value_vs_avg_policy_from_root']:.6f}")
+    else:
+        print("Best-response root value vs avg policy: unavailable")
+
+    print(f"Evaluation time: {res['elapsed_sec']:.3f} sec")
+
+
+def play_episode(game, p0_bot, p1_bot):
+    state = game.new_initial_state()
+
+    while not state.is_terminal():
+        if state.is_chance_node():
+            outcomes, probs = zip(*state.chance_outcomes())
+            action = np.random.choice(outcomes, p=probs)
+            state.apply_action(action)
+            continue
+
+        player = state.current_player()
+
+        if player == 0:
+            action = p0_bot.step(state)
+        else:
+            action = p1_bot.step(state)
+
+        state.apply_action(action)
+
+    return state.returns()
+
+games = [
+    ("Kuhn Poker", pyspiel.load_game("kuhn_poker")),
+    ("Leduc Poker", pyspiel.load_game("leduc_poker")),
+    ("Tic Tac Toe", pyspiel.load_game("tic_tac_toe"))
+]
+
+opponent_iters = [100, 500, 2000, 5000]
+
+for game_name, game in games:
+    print("\n" + "=" * 80)
+    print(f"BEST RESPONSE VS OS-MCCFR AVG POLICY: {game_name}")
+    print("=" * 80)
+
+    for iters in opponent_iters:
+        solver = outcome_sampling_mccfr.OutcomeSamplingSolver(game)
+        for _ in range(iters):
+            solver.iteration()
+
+        avg_policy = solver.average_policy()
+        br_policy = best_response.BestResponsePolicy(
+            game=game,
+            player_id=1,
+            policy=avg_policy
+        )
+
+        br_bot  = policy_lib.Policy(1, br_policy)
+        avg_bot = policy_lib.Policy(0, avg_policy)
+
+        returns = np.zeros(2, dtype=np.float64)
+        num_games = 1000
+
+        for _ in range(num_games):
+            ep_ret = play_episode(game, avg_bot, br_bot)
+            returns += np.array(ep_ret)
+
+        returns /= num_games
+
+        try:
+            nash_conv = exploitability.nash_conv(game, avg_policy)
+        except:
+            nash_conv = float("nan")
+
+        print(
+            f"OS-MCCFR({iters:>4}) | "
+            f"NashConv: {nash_conv:>10.6f} | "
+            f"BR root value p1: {br_policy.value(game.new_initial_state()):>10.6f} | "
+            f"avg_policy p0: {returns[0]:>10.6f} | "
+            f"BR p1: {returns[1]:>10.6f}"
+        )
+
+
+# if __name__ == "__main__":
+#     kuhn = pyspiel.load_game("kuhn_poker")
+#     leduc = pyspiel.load_game("leduc_poker")
+#     ttt = pyspiel.load_game("tic_tac_toe")
+
+#     games = [
+#         ("Kuhn Poker", kuhn),
+#         ("Leduc Poker", leduc),
+#         ("Tic-Tac-Toe", ttt),
+#     ]
+
+#     all_results = []
+#     for game_name, game in games:
+#         try:
+#             res = evaluate_matchup(game, game_name, num_episodes=500)
+#             all_results.append(res)
+#             print_result(res)
+#         except Exception as e:
+#             print(f"\n=== {game_name} failed ===")
+#             print(e)

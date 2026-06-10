@@ -1,0 +1,232 @@
+#include "types.h"
+#include "param.h"
+#include "defs.h"
+#include "spinlock.h"
+#include "sleeplock.h"
+#include "file.h"
+#include "fs.h"
+#include "mmu.h"
+#include "x86.h"
+#include "proc.h"
+#include "stat.h"
+#include "buf.h"
+#include "memlayout.h"
+#include "iso9660.h"
+
+static void
+read_block_range(char* dst, uint start_block, uint count) {
+  for (int block=start_block;block<start_block+count;block++) {
+      struct buf *bp = bread(2, block);
+      memmove(dst,bp->data,BSIZE);
+      brelse(bp);
+      dst+=BSIZE;
+  }
+}
+
+void
+iso9660fs_ipopulate(struct inode* ip)
+{
+  uint addr = ip->inum;          
+  uint start_block = addr / 512; 
+  uint abs512 = addr / 512;      
+  uint iso_block = abs512 & ~3;  
+  uint off = addr & 0x7FF;       
+  static char buf[2048];
+  read_block_range(buf, iso_block, 4); 
+
+  struct iso9660_dir_s *entry = (struct iso9660_dir_s*)(buf + off);
+
+  ip->type  = (entry->file_flags & 0x2) ? T_DIR : T_FILE;
+  ip->nlink = 1;
+  ip->size  = entry->size;
+  ip->addrs[0] = entry->extent * 2048; 
+  ip->flags |= I_VALID;
+
+
+}
+
+void
+iso9660fs_iupdate(struct inode* ip)
+{
+}
+
+static int
+iso9660fs_writei(struct inode* ip, char* buf, uint offset, uint count)
+{
+  return -1;
+}
+
+int
+iso9660fs_readi(struct inode* ip, char* dst, uint offset, uint size)
+{
+  if ( ip->type == T_DIR ) {
+    uint entry_index = offset / sizeof(struct dirent);
+    
+    if (entry_index == 0) {
+      // "." 
+      struct dirent *de = (struct dirent*)dst;
+      memmove(de->name, ".", 2);
+      de->inum = ip->inum;
+      return sizeof(struct dirent);
+    } else if (entry_index == 1) {
+      // ".." 
+      struct dirent *de = (struct dirent*)dst;
+      memmove(de->name, "..", 3);
+      de->inum = ip->inum; // For root, parent is itself
+      return sizeof(struct dirent);
+    }
+    
+    uint iso_entry_index = entry_index - 2;
+    
+    uint dir_extent = ip->addrs[0] / 512; 
+    uint dir_size = ip->size;
+    
+    uint blocks_to_read = (dir_size + BSIZE - 1) / BSIZE;
+    if (blocks_to_read > 8) blocks_to_read = 8; 
+    
+    char dir_buf[8 * BSIZE];
+    read_block_range(dir_buf, dir_extent, blocks_to_read);
+    
+    struct iso9660_dir_s *entry = (struct iso9660_dir_s*)dir_buf;
+    uint current_iso_index = 0;
+    
+    while ((char*)entry < dir_buf + dir_size && entry->length > 0) {
+      if (entry->filename.len > 1 && 
+          entry->filename.str[0] != 0 &&  
+          entry->filename.str[0] != 1) { 
+        
+        if (current_iso_index == iso_entry_index) {
+          struct dirent *de = (struct dirent*)dst;
+          
+          char clean_name[256];
+          int name_len = entry->filename.len;
+          int clean_len = name_len;
+          
+          memmove(clean_name, &entry->filename.str[1], name_len);
+          clean_name[clean_len] = '\0';
+
+          
+          if (clean_len >= 2 && 
+              clean_name[clean_len-2] == ';' && 
+              clean_name[clean_len-1] == '1') {
+            clean_len -= 2;
+            clean_name[clean_len] = '\0';
+          }
+          memmove(de->name, clean_name, clean_len + 1);
+          uint rec_off = (char*)entry - dir_buf;  
+          uint abs_byte_addr = (dir_extent * 512) + rec_off;
+          de->inum = abs_byte_addr;
+          return sizeof(struct dirent);
+        }
+        current_iso_index++;
+      }
+      entry = (struct iso9660_dir_s*)((char*)entry + entry->length);
+    }
+    return 0; 
+  }
+
+  
+  else if ( ip->type == T_FILE) {
+    uint count = ip->size;
+    if (offset >= ip->size)
+        return 0;
+
+    if (offset + count > ip->size)
+        count = ip->size - offset;
+
+    uint file_start = ip->addrs[0];    
+    uint abs = file_start + offset;   
+
+    uint block = abs / 512;
+    uint block_off = abs % 512;
+
+    uint n = count;
+    uint total = 0;
+
+    while (n > 0) {
+        struct buf* bp = bread(ip->mounted_dev, block);
+        uint chunk = 512 - block_off;
+        if (chunk > n) chunk = n;
+
+        memmove(dst + total, bp->data + block_off, chunk);
+        brelse(bp);
+
+        total += chunk;
+        n -= chunk;
+        block++;
+        block_off = 0;
+    }
+    return total;
+  }
+    return -1; 
+}
+
+struct inode_functions iso9660fs_functions = {
+  iso9660fs_ipopulate,
+  iso9660fs_iupdate,
+  iso9660fs_readi,
+  iso9660fs_writei,
+};
+
+void
+iso9660fsinit(char * const path, char * device)
+{
+  /*
+
+      uint dev = ip->dev;
+    uint addr = ip->inum;  
+    // because we're not sure about the alignment of the record, always read two blocks
+    static char buf[1024];
+    read_block_range(buf,addr/512,2);
+    struct iso9660_dir_s *entry = buf+(addr & 0x1ff); // offset into the block
+
+    ip->type = ((entry->file_flags == 0x2)?T_DIR:T_FILE);
+    ip->nlink = 1;
+    ip->size = entry->size;
+    ip->addrs[0] = entry->extent*2048;
+
+*/
+  cprintf("Mounting cdrom\n");
+  begin_op();
+  struct inode* mount_point = namei(path);
+  if (mount_point) {
+
+    static struct iso9660_pvd_s pvd;
+    read_block_range((char*)&pvd,64,4);
+    if(memcmp(pvd.id,"CD001",5)==0) {
+      cprintf("ID matched ISO9660 file system\n");
+    }
+    else {
+      cprintf("ID mismatch\n");
+      return;
+    }
+  
+  
+    cprintf("Root directory record version %d len %d size %d at %d, volume size %d block size %d set size %d.\n",pvd.version,
+    pvd.root_directory_record.length,
+    pvd.root_directory_record.size,
+    pvd.root_directory_record.extent,pvd.volume_space_size*2048,pvd.logical_block_size,pvd.volume_set_size);
+    
+    uint addr = pvd.root_directory_record.extent*2048; 
+    static char buf[2048];
+    read_block_range(buf,addr/512,4);
+    struct iso9660_dir_s *entry = (struct iso9660_dir_s*)buf;
+
+    while (entry->length) {
+      char namebuf[100]={0};
+      memmove(namebuf,&entry->filename.str[1],entry->filename.len);
+      cprintf("Entry: %s\n",namebuf);
+      entry = (struct iso9660_dir_s*) ((char*)entry+entry->length);
+    }
+
+
+    ilock(mount_point);
+    mount_point->i_func = &iso9660fs_functions;
+    mount_point->mounted_dev = 2;
+    mount_point->addrs[0]=pvd.root_directory_record.extent*2048; 
+    mount_point->type = T_DIR;   
+    mount_point->size = pvd.root_directory_record.size;
+    iunlock(mount_point);
+  }
+  end_op();
+}

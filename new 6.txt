@@ -1,0 +1,54 @@
+MCCFR
+
+============================================================
+Game: Kuhn Poker
+============================================================
+
+  -- MCCFR best response: player 0 vs fixed RWYWE (player 1) --
+  Building RWYWE tabular policy for player 1...
+  Training MCCFR (10000 iterations)...
+    iter  10000 | BR value for player 0: 0.094466
+
+    On-policy value (RWYWE as p0) :  -0.027333
+    BR value (MCCFR average policy)        :   0.094466
+    BR gain                                :   0.121800
+
+  -- MCCFR best response: player 1 vs fixed RWYWE (player 0) --
+  Building RWYWE tabular policy for player 0...
+  Training MCCFR (10000 iterations)...
+    iter  10000 | BR value for player 1: 0.076831
+
+    On-policy value (RWYWE as p1) :   0.016133
+    BR value (MCCFR average policy)        :   0.076831
+    BR gain                                :   0.060697
+
+  NashConv (sum of BR gains) :   0.182497
+  Exploitability             :   0.091248
+
+============================================================
+Game: Leduc Poker
+============================================================
+
+  -- MCCFR best response: player 0 vs fixed RWYWE (player 1) --
+  Building RWYWE tabular policy for player 1...
+  Training MCCFR (10000 iterations)...
+    iter  10000 | BR value for player 0: -0.030565
+
+    On-policy value (RWYWE as p0) :   0.446949
+    BR value (MCCFR average policy)        :  -0.030565
+    BR gain                                :  -0.477514
+
+  -- MCCFR best response: player 1 vs fixed RWYWE (player 0) --
+  Building RWYWE tabular policy for player 0...
+  Training MCCFR (10000 iterations)...
+    iter  10000 | BR value for player 1: 0.482516
+
+    On-policy value (RWYWE as p1) :   0.118717
+    BR value (MCCFR average policy)        :   0.482516
+    BR gain                                :   0.363799
+
+  NashConv (sum of BR gains) :  -0.113714
+  Exploitability             :  -0.056857
+  
+  
+  

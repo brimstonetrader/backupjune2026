@@ -1,0 +1,44 @@
+HASKELL BOOK:
+	
+	bas
+		floating point
+		continued fractions
+		base neutrality
+		p-adics
+		hypernions
+		primes and the basel problem
+		ulam spiral
+	grp
+		groups
+		graphs and data structures
+		matrices and linear
+	rng
+		permutations and sorting
+		sudo rng
+		pdfs 
+		quantum voodoo
+	nim
+		boolean algebra -> binary xor
+		nimbers
+		mexing
+		surreals
+		games
+	itr
+		recurrance relations
+		recursion
+		number walls
+		mandlebrot set
+		markov chains
+	sys
+		formal systems
+		symbols
+		mcts
+	seq
+    
+    
+		cellular automata    
+		top 20 oeis sequences
+		ominos and tilings
+		self avoiding walks
+		no 3 in line
+		

@@ -1,0 +1,5 @@
+AMAZING SPIDERMAN ASSIGNMENT 2
+
+This network predicts likelihood of heart disease based on cholesterol levels, age, blood pressure, family history, exercise frequency, and nicotine use. All test cases worked as expected, and the given results were broadly plausible. The stated shortcomings are reasonable given the scope of the project. The included pdf is very detailed and well-written. 
+
+Grade: 10/10
